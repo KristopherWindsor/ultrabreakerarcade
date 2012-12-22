@@ -38,7 +38,6 @@ Type main_levelpack_type
   Declare Sub load overload (index as integer)
   Declare Sub load overload (t as string)
   Declare Sub save ()
-  Declare Sub resubmit ()
   Declare Sub unlock ()
   
   Declare property gfxset () As String

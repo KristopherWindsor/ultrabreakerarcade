@@ -1323,32 +1323,6 @@ property main_levelpack_type.gfxset (Byref igfxset As String)
   Mutexunlock(threadmutex)
 End property
 
-Sub main_levelpack_type.resubmit ()
-  'for every recording in this levelpack, add it to the submission queue
-  'this is a solution to a potential "disappearing recordings" error; no gameplay effect
-  
-  Dim As Integer f, total
-  
-  Dim As String path = Lcase(title)
-  
-  For i As Integer = 1 To level_total
-    f = utility.openfile("data/levelpacks/" & path & "/recordings/" & i & "/total.txt", _
-      utility_file_mode_enum.for_input)
-    If f = 0 Then Continue For
-    Input #f, total
-    Close #f
-    
-    For i2 As Integer = 1 To total
-      With server
-        If .submit_total = .submit_max Then Exit Sub
-      
-        .submit_total += 1
-        .submit(.submit_total) = "data/levelpacks/" & path & "/recordings/" & i & "/" & i2 & ".ubr"
-      End With
-    Next i2
-  Next i
-End Sub
-
 property main_levelpack_type.showname () As String
   Return list(indexOf).showname
 End property

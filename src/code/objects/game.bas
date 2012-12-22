@@ -369,7 +369,7 @@ Sub game_type.run ()
       Case 3
         'cheats
         cheat = Ucase(utility.gettext(cheat))
-        result.didcheat Or= (cheat <> "RESUBMIT" And cheat <> "SUBMITNOW" And _
+        result.didcheat Or= (cheat <> "SUBMITNOW" And _
           cheat <> "DIEDIEDIE" And cheat <> "SPEAK" And cheat <> "DEV" And cheat <> "HARDCORE" and _
           cheat <> "README" and cheat <> "WELCOME")
         
@@ -444,9 +444,6 @@ Sub game_type.run ()
           mode_pixelation = true
         Case "README"
           shell("start readme.txt")
-        Case "RESUBMIT"
-          'not a cheat!
-          main.levelpack.resubmit()
         Case "SEASICK"
           For i As Integer = 1 To brick.total
             brick.graphic.erasebrick(brick.object(i))
