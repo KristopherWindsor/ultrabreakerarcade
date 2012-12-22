@@ -1,0 +1,68 @@
+Greedy
+
+// Generated with UB Leveler .2 (16:15:54 on 02-19-2009)
+VERSION 1.0
+
+// Settings, part I
+
+PADDLESIDES bottom
+
+// Layer 1
+
+BRICKSET 12 18 ycollapse
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                   [a45][a45][a45][a45][a45]
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+
+ITEM 04.000 08.000 bonusbutton 0
+
+// Layer 2
+
+BRICKSET 12 18 ycollapse
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                   [W45][Z45][W45][Z45][W45]
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+
+ITEM 04.000 08.000 gravity 9
+
+// Settings, part II
+
+BACKGROUND FF888888 bluehole
+BALLMULTIPLIER 1
+BALLSIZE 1
+BALLSPEED 1
+MINSCORE 750
+PADDLESIZE 1
+PADDLESTYLE super
+SPECIAL nobrickwin
+TIMELIMIT 10 0

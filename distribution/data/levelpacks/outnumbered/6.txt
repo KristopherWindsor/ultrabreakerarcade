@@ -1,0 +1,130 @@
+Scouts
+
+// Generated with UB Leveler 1.0 (19:57:17 on 09-05-2009)
+
+VERSION 1.0
+
+// Settings, part I
+
+PADDLESIDES bottom
+
+// Layer 1
+
+BRICKSET 12 18 ycollapse
+                                                            
+                                                            
+               [A95]                    [A95]               
+                                                            
+                                                            
+                                                            
+               [A95]                    [A95]               
+                                                            
+                                                            
+                                                            
+               [A95]                    [A95]               
+                                                            
+                                                            
+                                                            
+               [A95]                    [A95]               
+                                                            
+                                                            
+                                                            
+
+// Layer 2
+
+BRICKSET 12 18 ycollapse
+                                                            
+                                                            
+               [A75]                    [A75]               
+                                                            
+                                                            
+                                                            
+               [A75]                    [A75]               
+                                                            
+                                                            
+                                                            
+               [A75]                    [A75]               
+                                                            
+                                                            
+                                                            
+               [A75]                    [A75]               
+                                                            
+                                                            
+                                                            
+
+// Layer 3
+
+BRICKSET 12 18 ycollapse
+                                                            
+                                                            
+               [540]                    [540]               
+                                                            
+                                                            
+                                                            
+               [A45]                    [A45]               
+                                                            
+                                                            
+                                                            
+               [A45]                    [A45]               
+                                                            
+                                                            
+                                                            
+               [A45]                    [A45]               
+                                                            
+                                                            
+                                                            
+
+// Layer 4
+
+BRICKSET 12 18 ycollapse
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+               [a25]                    [a25]               
+                                                            
+                                                            
+                                                            
+               [a25]                    [a25]               
+                                                            
+                                                            
+                                                            
+               [a25]                    [a25]               
+                                                            
+                                                            
+                                                            
+
+// Layer 5
+
+BRICKSET 12 18 ycollapse
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+               [W25]                    [W25]               
+                                                            
+                                                            
+                                                            
+               [W25]                    [W25]               
+                                                            
+                                                            
+                                                            
+               [W25]                    [W25]               
+                                                            
+                                                            
+                                                            
+
+// Settings, part II
+
+BACKGROUND FF888888 greenrecord
+BALLMULTIPLIER 1
+BALLSIZE 1
+BALLSPEED 1
+MINSCORE 1000000
+PADDLESIZE 1
+PADDLESTYLE super
+TIMELIMIT 10 0

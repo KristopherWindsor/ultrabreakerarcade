@@ -1,0 +1,106 @@
+Confusion
+
+// Generated with UB Leveler .2 (23:40:20 on 06-01-2009)
+VERSION 1.0
+
+// Settings, part I
+
+PADDLESIDES bottom
+PADDLESIDES bottom
+
+// Layer 1
+
+BRICKSET 12 18 ycollapse
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+
+ITEM 02.000 02.000 brickmachine 60
+ITEM 11.000 02.000 brickmachine 60
+ITEM 01.000 03.000 brickmachine 60
+ITEM 12.000 03.000 brickmachine 60
+
+// Layer 2
+
+BRICKSET 6 9 ycollapse
+                              
+                              
+[D75][D75][D75][D75][D75][D75]
+[D75][D75][D75][D75][D75][D75]
+[D75][D75][D75][D75][D75][D75]
+[D75][D75][D75][D75][D75][D75]
+[D75][D75][D75][D75][D75][D75]
+[D75][D75][D75][D75][D75][D75]
+[D75][D75][D75][D75][D75][D75]
+
+// Layer 3
+
+BRICKSET 12 18 ycollapse -1
+                         [945][645]                         
+                         [745][845]                         
+                         [442][a45]                         
+                         [a45][a45]                         
+                         [a45][a45]                         
+                         [a45][a45]                         
+                         [a45][a45]                         
+                         [a45][a45]                         
+                         [a45][a45]                         
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+
+// Layer 4
+
+BRICKSET 12 18 ycollapse -1
+                                                            
+                                                            
+                                                            
+                         [Z45][Z45]                         
+                         [W45][W45]                         
+                         [W45][W45]                         
+                         [W45][W45]                         
+                         [W45][W45]                         
+                         [W45][W45]                         
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+
+// Settings, part II
+
+BACKGROUND FF888888 default
+BALLMULTIPLIER 1
+BALLSIZE 1
+BALLSPEED 1
+BONUSLIVES 1
+MINSCORE 5000
+PADDLESIZE 1
+PADDLESTYLE super
+SPECIAL shooter
+TIMELIMIT 10 0

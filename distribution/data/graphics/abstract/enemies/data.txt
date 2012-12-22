@@ -1,0 +1,40 @@
+// format: 1-8 lasers, 0-8 engines; x, y, angle (degrees); booster angles are backwards
+//
+//
+// spaceship 1: rocker
+//
+160 160 0
+-
+40 70 0
+40 250 0
+-
+//
+// spaceship 2: speedster
+//
+252 47 -18
+252 273 18
+-
+20 40 0
+20 280 0
+-
+//
+// spaceship 3: destroyer
+// has four boosters instead of two (from top to bottom)
+//
+320 20 0
+320 300 0
+-
+66 28 45
+66 292 -45
+20 80 0
+20 240 0
+-
+//
+// spaceship 4: scout
+//
+220 100 0
+220 220 0
+-
+50 40 45
+50 280 -45
+-
