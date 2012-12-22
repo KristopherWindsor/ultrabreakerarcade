@@ -1395,7 +1395,7 @@ sub main_player_type.selectname ()
   if lastplayer = anonymous then
     n = utility.gettext("Your name")
   else
-    n = utility.gettext(anonymous)
+    n = utility.gettext(lastplayer)
   end if
   If n = "" or n = "Your name" Then n = "Guest"
   
