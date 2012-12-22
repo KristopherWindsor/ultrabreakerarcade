@@ -1392,8 +1392,12 @@ sub main_player_type.selectname ()
   'if it's a new player, confirm making new player
   'if they don't want a new player, then give them a menu with the list of existing player names
   
-  n = utility.gettext(lastplayer,, "Enter player name (for highscores)")
-  If n = "" or n = "Player name" Then n = "Guest"
+  if lastplayer = anonymous then
+    n = utility.gettext("Your name")
+  else
+    n = utility.gettext(anonymous)
+  end if
+  If n = "" or n = "Your name" Then n = "Guest"
   
   For i As Integer = 1 To name_total
     If Ucase(Name(i)) = Ucase(n) Then
