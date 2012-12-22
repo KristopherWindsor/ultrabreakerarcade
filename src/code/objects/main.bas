@@ -54,14 +54,6 @@ Sub main_type.run ()
   If setting.areyounotnew = false Then
     setting.areyounotnew = true
     sound.speak("welcome to ultrabreaker!")
-    if menu.confirm("Visit Welcome Web Page?") then
-      server.processcommands(welcomecommand)
-    end if
-    If menu.confirm("Enable Online Leaderboard and Updates?") Then
-      setting.serversync = setting_sync_enum.ask
-    Else
-      setting.serversync = setting_sync_enum.disabled
-    End If
     player.selectname()
   End If
   #Endif
@@ -79,29 +71,26 @@ Sub main_type.run ()
         .disablecancel = true
         Select Case setting.unlockedmode
         Case setting_featurelock_enum.unlocked
-          .option_total = 7
-          .option(1) = "Play!"
-          .option(2) = "Profile"
-          .option(3) = "Gallery"
-          .option(4) = "Settings"
-          .option(5) = "Get levels"
-          .option(6) = "Editor"
-          .option(7) = "Quit"
-        Case setting_featurelock_enum.progressing
           .option_total = 6
           .option(1) = "Play!"
           .option(2) = "Profile"
           .option(3) = "Gallery"
           .option(4) = "Settings"
-          .option(5) = "Get levels"
+          .option(5) = "Editor"
           .option(6) = "Quit"
-        Case setting_featurelock_enum.locked
+        Case setting_featurelock_enum.progressing
           .option_total = 5
+          .option(1) = "Play!"
+          .option(2) = "Profile"
+          .option(3) = "Gallery"
+          .option(4) = "Settings"
+          .option(5) = "Quit"
+        Case setting_featurelock_enum.locked
+          .option_total = 4
           .option(1) = "Play!"
           .option(2) = "Profile"
           .option(3) = "Settings"
           .option(4) = "Quit"
-          .option(5) = "Welcome page"
         End Select
         .xoption = .option_total
       End With
@@ -115,18 +104,12 @@ Sub main_type.run ()
         gallery()
       Case "Settings"
         settings()
-      Case "Get levels"
-        server.getlevels()
       Case "Editor"
         test()
       Case "Quit"
         quit = true
-      case "Welcome page"
-        server.processcommands(welcomecommand)
       End Select
     Loop Until quit
-    
-    server.sync()
     
     'show closing (with credits)
     framerate.reset()
@@ -174,7 +157,6 @@ Sub main_type.start ()
   setting.start()
   utility.start()
   game.start()
-  server.start()
   
   main.player.start()
   main.levelpack.start()
@@ -201,7 +183,6 @@ Sub main_type.finish ()
   
   game.finish()
   screen.finish()
-  server.finish()
   setting.finish ()
   sound.finish()
   utility.finish()
@@ -995,16 +976,15 @@ Sub main_type.settings ()
   
   With mainmenu
     .title = "Settings"
-    .option_total = 9
+    .option_total = 8
     .option(1) = "Controls"
     .option(2) = "Graphics"
     .option(3) = "Multiplayer"
     .option(4) = "Performance"
     .option(5) = "Recordings"
     .option(6) = "Screen size"
-    .option(7) = "Server sync"
-    .option(8) = "Tips"
-    .option(9) = "Volume"
+    .option(7) = "Tips"
+    .option(8) = "Volume"
   End With
   
   Do
@@ -1022,10 +1002,8 @@ Sub main_type.settings ()
     Case 6
       screen.set()
     Case 7
-      setting.set_web()
-    Case 8
       setting.set_tips()
-    Case 9
+    Case 8
       sound.set_volume()
     End Select
   Loop Until mainmenu.returnvalue = false
@@ -1379,7 +1357,6 @@ End Sub
 property main_levelpack_onepack_type.showname () As String
   Dim As String prefix
   If iscompleted = false Then prefix = "* "
-  If server.islbpack(title) Then prefix += "(Official) "
   Return prefix & title
 End property
 
@@ -1416,7 +1393,7 @@ sub main_player_type.selectname ()
   'if it's a new player, confirm making new player
   'if they don't want a new player, then give them a menu with the list of existing player names
   
-  n = utility.gettext(lastplayer,, "Enter player name (for highscores and leaderboard)")
+  n = utility.gettext(lastplayer,, "Enter player name (for highscores)")
   If n = "" or n = "Player name" Then n = "Guest"
   
   For i As Integer = 1 To name_total
@@ -1426,11 +1403,6 @@ sub main_player_type.selectname ()
       return
     End If
   Next i
-  
-  if menu.confirm("Verify this name on the online leaderboard?") then
-    server.processcommands("OPEN http://ultrabreaker.com/main/index.php?cat=checkname&name=" + _
-      network.urlencode(n) + !"\nEND")
-  end if
   
   with mainmenu
     .title = "New Player"

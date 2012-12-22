@@ -5,13 +5,6 @@ enum setting_featurelock_enum
   unlocked    = 2 'unlocked editor
 end enum
 
-enum setting_sync_enum
-  disabled        = 0
-  ask             = 1
-  autosync        = 2
-  autosyncandopen = 3
-end enum
-
 Type setting_type
   const keyboardspeedstep = 8 * dsfactor
   const maxplayers = 2
@@ -23,7 +16,6 @@ Type setting_type
   Declare Sub set_performance ()
   Declare Sub set_recordings ()
   Declare Sub set_tips ()
-  declare sub set_web ()
   Declare Sub start ()
   
   As Integer alphavalue    '255, 191, 127, 63
@@ -41,7 +33,6 @@ Type setting_type
   as integer autosave      'save every recording, coz i said so!
   as integer keyboardspeed 'keyboard control movement
   
-  as setting_sync_enum serversync          'do you want to open the web site after submitting?
   as setting_featurelock_enum unlockedmode 'means you haven't unlocked some certain pack that enables the store + editor
   
   as integer areyounotnew  'one-time use variable for opening an intro web page

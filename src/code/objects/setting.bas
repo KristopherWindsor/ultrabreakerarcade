@@ -19,7 +19,6 @@ Sub setting_type.start ()
   Input #f, tips
   Input #f, autosave
   Input #f, keyboardspeed
-  Input #f, serversync
   Input #f, unlockedmode
   Input #f, areyounotnew
   Close #f
@@ -325,25 +324,6 @@ Sub setting_type.set_tips ()
   Loop Until mainmenu.returnvalue = false
 End Sub
 
-Sub setting_type.set_web ()
-  Dim As menu_setting_type mainmenu
-  
-  Do
-    With mainmenu
-      .title = "Server Sync"
-      .option_total = 4
-      .option_preselected = serversync + 1
-      .option(1) = "Don't server sync"
-      .option(2) = "Ask to server sync"
-      .option(3) = "Autosync on game exit"
-      .option(4) = "Autosync and open website"
-    End With
-    
-    menu.show(mainmenu)
-    If mainmenu.returnvalue > 0 Then serversync = (mainmenu.returnvalue - 1)
-  Loop Until mainmenu.returnvalue = false
-End Sub
-
 Sub setting_type.finish ()
   #ifndef server_validator
   Dim As Integer f
@@ -363,7 +343,6 @@ Sub setting_type.finish ()
   Print #f, tips
   Print #f, autosave
   Print #f, keyboardspeed
-  Print #f, serversync
   Print #f, unlockedmode
   Print #f, areyounotnew
   Close #f

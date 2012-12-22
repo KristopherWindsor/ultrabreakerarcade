@@ -369,9 +369,9 @@ Sub game_type.run ()
       Case 3
         'cheats
         cheat = Ucase(utility.gettext(cheat))
-        result.didcheat Or= (cheat <> "SUBMITNOW" And _
-          cheat <> "DIEDIEDIE" And cheat <> "SPEAK" And cheat <> "DEV" And cheat <> "HARDCORE" and _
-          cheat <> "README" and cheat <> "WELCOME")
+        result.didcheat Or= (cheat <> "DIEDIEDIE" And _
+          cheat <> "SPEAK" And cheat <> "HARDCORE" and _
+          cheat <> "README")
         
         Select Case cheat
         Case "5XOMATIC"
@@ -395,8 +395,6 @@ Sub game_type.run ()
               .replicate(.object(.total))
             End If
           end with
-        Case "DEV"
-          server.processcommands(!"OPEN http://games.freebasic.net/forum/index.php?topic=219.msg3733#msg3733\nEND")
         Case "DIEDIEDIE"
           result.liveslost = mode.lives
           result.livesgained = 0
@@ -462,9 +460,6 @@ Sub game_type.run ()
         Case "SPEAK"
           sound.speak("What do you want me to say?")
           sound.speak(utility.gettext("I do not know english!"))
-        Case "SUBMITNOW"
-          'not a cheat!
-          server.sync(false)
         Case "SUPERCONTROL"
           'super paddle / normal paddle (toggle)
           For i As Integer = 1 To paddle.total
@@ -492,8 +487,6 @@ Sub game_type.run ()
           result.scoregained = result.scoregained + 1000
         Case "WARP"
           mode_speedfactor += 1
-        case "WELCOME"
-          server.processcommands(!"OPEN http://ultrabreaker.com/forum/index.php?topic=16\nEND")
         case "WINDY"
           mode_windfactor = 8
         Case Else
@@ -1518,8 +1511,6 @@ Sub game_replay_type.save ()
       Put #f, Sizeof(game_replay_header_type) + (i - 1) * Sizeof(game_replay_frame_type) + 1, .frame(i)
     Next i
     Close #f
-    
-    server.addrecording(levelpackrecordingspath & game.mode.level & "/" & temp & ".ubr")
   End With
 End Sub
 
