@@ -32,7 +32,6 @@ Beta testing:
 	Kristian, Kaleb, and Kristof Windsor
 
 Code library development:
-	Cha0s (Chisock)
 	Dr_D and Yetifoot (Rotozoom)
 	D.J. Peters (AVICapture)
 	Victor Aurion Moentero Leonheart (ABFont)
@@ -56,9 +55,6 @@ http://www.gzip.org/zlib/zlib_license.html
 
 AVICapture:
 http://www.freebasic.net/forum/viewtopic.php?t=13066
-
-ChiSock:
-http://www.freebasic.net/forum/viewtopic.php?t=8454
 
 FBGFX:
 http://fbc.svn.sourceforge.net/viewvc/fbc/trunk/FreeBASIC/src/gfxlib2/

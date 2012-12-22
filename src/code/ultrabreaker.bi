@@ -1,6 +1,6 @@
 
-' Ultrabreaker!
-' (C) 2006 - 2009 Innova and Kristopher Windsor
+' Ultrabreaker...............a breakout game
+' Developed since 2006 by Kristopher Windsor
 
 #include once "version.bi"
 
@@ -27,8 +27,6 @@
   #define server_dummy
 
   'headers
-  
-  #include once "network/network.bas"
   
   #define UNICODE
   #include once "disphelper/disphelper.bi"
