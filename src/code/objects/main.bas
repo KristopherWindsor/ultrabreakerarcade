@@ -5,9 +5,8 @@ Sub main_type.run ()
   
   Dim As Integer intro_fontwidth, quit
   Dim As Double intro_angle, intro_distance, intro_scale
-  Dim As String credits(1 To 10) = _
+  Dim As String credits(1 To 9) = _
     {"Ultrabreaker " & ultrabreaker_version_major & "." & ultrabreaker_version_minor, _
-    "(C) 2006 - 2010", _
     "", _
     "Special thanks to", _
     "Kristopher Windsor - lead developer", _

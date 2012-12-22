@@ -91,7 +91,7 @@ Sub screen_type.set Overload (Byval x As Integer, Byval y As Integer)
   view_sy = default_sy * scale
   
   Screenres x, y, 32,, fb.gfx_high_priority
-  Windowtitle("Ultrabreaker BETA")
+  Windowtitle("Ultrabreaker")
   gamewindow = FindWindow(NULL, "UltraBreaker")
   
   If Screenptr() = 0 Then

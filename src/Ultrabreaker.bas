@@ -4,7 +4,6 @@
 
 ' Licensing
 ' - All borrowed code and assets are OK for commercial redistribution (mostly in the public domain)
-'   (note: music licensing is still in progress)
 ' - Orginal code and assets for this game should not be redistributed for non-personal use without written permission
 
 'A brief history:

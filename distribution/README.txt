@@ -20,8 +20,10 @@ It's the new brick-breaking game in town.
 ---------- How to play
 
 Thanks for playing!
-For help, please see the welcome message:
-http://ultrabreaker.com/forum/index.php?topic=16
+
+Move your paddle to save the ball while destroying bricks.
+Levels are grouped into levelpacks, and completing one levelpack may unlock another.
+After you have completed all of the levelpacks, the level editor will be accessible from the main menu.
 
 ---------- Credits
 
@@ -42,8 +44,6 @@ Code library development:
 Music:
 	Aki Nordman (d-b-imdi.it, elektro.it, hehho.it)
 	Anders Dator Felix Dator (0-pixel.xm, 0-pt.xm, 0-stray.xm, felix8g-mem.xm, felix8g77-3.xm)
-	JaseChong (r-adrnln.s3m)
-	The other MODs may not be properly licensed / will be dropped from the game
 
 UltraBreaker is (C) Copyright 2006 - 2012 Kristopher Windsor
 All libraries and assets used with permission
@@ -76,5 +76,4 @@ http://www.zlib.net/zlib_license.html
 
 ---------- Support
 
-Need help? Have suggestions that you don't want to post on the forum?
 Email is appreciated: support@ultrabreaker.com
