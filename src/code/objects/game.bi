@@ -20,8 +20,6 @@ Type game_mode_type
   As Integer level
   As Integer lives
   As Integer orbtokens
-  As Integer tslave 'game was started by level editor (so test for the quit flag; don't show post-game menu)
-  As Integer replayfile '-1: replay from command(), 0: play, else: replay a saved game
   As Double speed 'ball speed
   as integer instantrestart
 End Type
@@ -52,7 +50,6 @@ type game_result_type
   As Integer didwin
   As Integer liveslost, livesgained
   As Integer orbtokens 'total left remaining (will be mode_orbtokens if no bonuses collected)
-  As Integer savegame 'this is a request flag; after game is run, caller should test for this, then save
   as integer instantrestart 'restart level after this is closed?
   
   'As Integer result_scoregained is replaced by property
@@ -62,69 +59,6 @@ end type
 
 Type game_control_type
   As Integer x, y, click, launchdelay
-End Type
-
-Type game_replay_header_type Field = 4
-  'replay less states
-  'binary save this type to create a recording
-  'sizeof() -> ~120b
-  
-  Declare Sub hash ()
-  Declare Function checkhash () As Integer
-  
-  'file is changed here when player submits recordings
-  'actually not used: might need to resubmit for various reasons (scoring changed?)
-  'flag might have some purpose in the future; but only for local use
-  As Ubyte submitted
-  
-  As String * 16 player 'only set for saving to file
-  As String * 18 timestamp
-  
-  As String * 16 levelpack
-  As Integer levelnumber
-  
-  As Double seed 'manipulate randomness so replays work OK
-  As Integer score 'server checks this to validate recording
-  
-  As Integer hash1
-  
-  'need to validate these when processed by server
-  'when these are loaded, overwrite data_game.mode_*
-  As Integer lives 'not used when submitted; only for local replays
-  As Integer orbtokens
-  As Integer players 'changes global setting when replaying; the replay menu function has to preserve the original value
-  As Double speed 'based on arcade mode
-  
-  As Integer hash2
-  
-  As Integer frame_total
-End Type
-
-Type game_replay_frame_type
-  'delay preceeds button change state
-  
-  Declare Sub set (Byval frame As Integer, Byref c As game_control_type)
-  Declare Function to_controlstate () As game_control_type
-  
-  Declare Function equals (Byref c As game_control_type) As Integer
-  
-  As Ushort delay
-  As Ushort x, y
-  As Ubyte b
-End Type
-
-Type game_replay_type
-  Const frame_max = 145000
-  
-  Declare Sub Reset () 'loads replay sometimes
-  Declare Sub recordframe () 'loads replay sometimes
-  Declare Sub save ()
-  
-  'as integer is_replaying 'true? -> replay single player game
-  As Integer frame_current 'only used while replaying game
-  
-  As game_replay_header_type header
-  As game_replay_frame_type frame(1 To frame_max) 'start at position 100 in the file
 End Type
 
 Type game_text_object_type
@@ -216,7 +150,6 @@ Type game_type
   As Integer mode_invertedcolors
   As Integer mode_pixelation
   As Integer mode_speedfactor
-  as integer mode_hardcore 'instant restart trick; is not reset every game
   as integer mode_windfactor
   
   'track (log) certain things for various reasons
@@ -228,12 +161,6 @@ Type game_type
   
   'text for displaying on the screen
   As game_text_type text
-  
-  'replay data
-  As game_replay_type replay
-  
-  'video saving (YouTube!)
-  superfluous As avicapture video
 End Type
 
 Dim Shared As game_type game

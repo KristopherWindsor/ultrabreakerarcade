@@ -1,21 +1,4 @@
 
-Type main_save_type
-  'a game save
-  As Integer level
-  As Integer lives
-  As Integer score
-  As Integer orbtokens
-End Type
-
-Type main_score_type
-  'a highscore entry
-  As Integer score
-  'level is how many levels you played on that game (only for arcade mode)
-  'not used for sorting scores
-  As Integer level
-  As String player
-End Type
-
 type main_levelpack_onepack_type
   
   declare property showname () as string
@@ -27,7 +10,6 @@ end type
 Type main_levelpack_type
   'contains info for the current levelpack, set and sent by main_levelpack()
   
-  Const scorespermode = 10 'save top 10 scores
   Const level_max = 256
   Const list_max = 1024
   
@@ -53,15 +35,6 @@ Type main_levelpack_type
   As Integer level_total, unlockedtotal
   As String level(1 To level_max) 'level names
   As String unlocks 'name of levelpack this pack will unlock / undelete
-  
-  'As String lastplayer
-  
-  'note: player name is entered in when added to the high score list; not saved in the progress variables
-  As main_score_type mission_score(1 To scorespermode)
-  'As data_save_type mission_save
-  As main_score_type arcade_score(1 To scorespermode)
-  As main_save_type arcade_save
-  As main_score_type master_score(1 To level_max) 'one score per level; saved last so adding new levels doesn't ruin anything
   
   'data is for all the levelpacks
   
@@ -98,16 +71,10 @@ type main_type
   declare sub start ()
   declare sub screenchange ()
   declare sub finish ()
-  declare sub gallery ()
+  declare sub choose_world ()
+  declare sub gameover ()
+  declare function intro () as integer
   declare sub play ()
-  declare sub highscore ()
-  declare sub playmaster ()
-  declare sub playreplay ()
-  declare sub playreplay_selectrecording (Byval levelnumber As Integer)
-  declare sub selectlevelpack ()
-  declare sub settings ()
-  declare sub test ()
-  declare sub validate ()
   
   as main_levelpack_type levelpack
   as main_player_type player

@@ -55,7 +55,6 @@ Type sound_type
   declare sub commit_volume_music (level as integer = -1)
   declare sub commit_volume_sfx (level as integer = -1)
   Declare Sub speak (Byref _text As String, Byval dowait As Integer = false)
-  Declare Sub set_volume ()
   
   As Sub(Byval text As Any Ptr) Ptr speakthread
   as any ptr threadmutex

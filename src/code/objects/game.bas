@@ -36,8 +36,6 @@ Sub game_type.reset ()
   tracker_bonuscollect = -1E8
   tracker_bonustitle = ""
   
-  replay.reset()
-  
   With setting
     .requiredscore = defaultrequiredscore
     .timelimit = timemax * fps
@@ -61,7 +59,6 @@ Sub game_type.reset ()
     .liveslost = 0
     .livesgained = 0
     .orbtokens = mode.orbtokens
-    .savegame = false
     .instantrestart = false
     
     .scoregained = 0 'property call updates master score
@@ -210,18 +207,6 @@ Sub game_type.run ()
   dim as integer forcedraw, spresses 'forcedraw after pressing "s"
   Dim As Double menu_t
   Dim As String key, key2
-  Dim As menu_setting_type mainmenu, info
-  
-  With mainmenu
-    .title = "#" & mode.level & " " & get_levelname()
-    .option_total = 5
-    .option(1) = "Screenshot"
-    .option(2) = "Info"
-    .option(3) = "Cheats"
-    .option(4) = "Set volume"
-    .option(5) = "Quit"
-    .screenshot_ison = true
-  End With
   
   load()
   superfluous If ..setting.mouseclipping Then Setmouse(,,, 1)
@@ -259,287 +244,17 @@ Sub game_type.run ()
       Loop Until Len(key2) > 0
       framerate.fixtimeout()
       forcedraw = true
-    Case "v"
-      If frametotal = 0 And mode.replayfile <> 0 And video.isStarted = false Then
-        video.start("videos/" & utility.gettext("filename") & ".avi")
-      End If
-    Case Chr(255, 75)
-      'FREEZE cheat, for replays only
-      If mode.replayfile <> 0 Then
-        If mode_speedfactor > 0 Then mode_speedfactor -= 1
-      End If
-    Case Chr(255, 77)
-      'WARP cheat, for replays only
-      If mode.replayfile <> 0 Then mode_speedfactor += 1
-    Case Chr(27)
-      menu_t = Timer
-      Get (0, 0) - (screen.screen_sx - 1, screen.screen_sy - 1), utility.graphic.screenshot
-      If ..setting.mouseclipping Then Setmouse(,,, 0)
-      
-      mainmenu.scrolloffset = 0
-      Select Case menu.show(mainmenu)
-      Case 1
-        'screenshot
-        f = utility.openfile("data/screenshot.txt", utility_file_mode_enum.for_input)
-        Input #f, screenshot
-        Close #f
-        screenshot += 1
-        f = utility.openfile("data/screenshot.txt", utility_file_mode_enum.for_output)
-        Print #f, screenshot
-        Close #f
-        
-        f = utility.openfile("data/screenshot-captions.txt", utility_file_mode_enum.for_append)
-        print #f, left(main.levelpack.title & " #" & mode.level, 16)
-        Close #f
-        
-        With utility.graphic
-          png_save24("screenshots/" & screenshot & ".png", .screenshot)
-          image_scaler(.screenshot_thumb, 0, 0, .screenshot, 240 / screen.screen_sy)
-          png_save24("screenshots/thumbs/" & screenshot & ".png", .screenshot_thumb)
-        End With
-      Case 2
-        'info
-        With info
-          .title = "Info"
-          .readonly = true
-          .option_total = 32 - (((Timer() * 1000) Mod 50) = 0)
-          
-          .option(1) = get_levelname()
-          If orb.total >= 1 Then
-            var orb_power = 0
-            for i as integer = 1 to orb.total
-              if orb.object(i).lives > orb_power then orb_power = orb.object(i).lives
-            next i
-            .option(2) = "Power: " & utility.percentage(orb_power / orb.lives_max)
-          Else
-            .option(2) = ""
-          End If
-          .option(3) = "Lives: " & (mode.lives + result.livesgained - result.liveslost)
-          .option(4) = get_time()
-          If paddle.total >= 1 Then
-            var paddle_shield_total = paddle.lives_max
-            For i As Integer = 1 To paddle.total
-              If paddle.object(i).lives < paddle_shield_total Then paddle_shield_total = paddle.object(i).lives
-            Next i
-            .option(5) = "Shields: " & utility.percentage(paddle_shield_total / paddle.lives_max)
-          Else
-            .option(5) = ""
-          End If
-          .option(6) = "" 'score shown by callback
-          
-          .option(8) = "Laser power: " & laser.power
-          .option(9) = "Laser stock: " & Int(laser.launchload)
-          
-          .option(11) = "Ball total: " & ball.total
-          .option(12) = "Bonus total: " & bonus.total
-          .option(13) = "Brick total: " & brick.total
-          .option(14) = "Enemy total: " & enemy.total
-          .option(15) = "Flying brick total: " & xfx.flyingbrick.total
-          .option(16) = "Gravity total: " & gravity.total
-          .option(17) = "Item total: " & item.total
-          .option(18) = "Laser total: " & laser.total
-          .option(19) = "Orb total: " & orb.total
-          .option(20) = "Paddle total: " & paddle.total
-          .option(21) = "Particle total: " & xfx.particle.total
-          
-          'show default speed for this level, then show actual speed of a ball
-          .option(23) = "Ball speed: " & utility.percentage(mode.speed * ball.data_speed)
-          If ball.total > 0 Then
-            var b1 = @ball.object(1)
-            .option(23) += " (" & Cint(screen.scale * Sqr(b1->xv * b1->xv + b1->yv * b1->yv)) & " px/sec)"
-          End If
-          .option(24) = "Orb tokens: " & result.orbtokens & " / 3"
-          
-          .option(26) = "Ball scale: " & utility.percentage(ball.object(1).scale / ball.scalefactor)
-          .option(27) = ""
-          If enemy.total >= 1 Then
-            .option(27) = "Enemy scale: " & utility.percentage(enemy.object(1).scale / enemy.scalefactor)
-          End If
-          .option(28) = "Paddle scale: " & utility.percentage(paddle.data_scale / paddle.scale_factor)
-          .option(29) = "Screen scale: " & utility.percentage(screen.view_sx / screen.preferred_sx)
-          
-          .option(31) = "Display rate: ~" & _
-            Int((framerate.displaylog_max - 1) / _
-            (framerate.t - framerate.displaylog(framerate.displaylog_max)) + .5) & "FPS"
-          .option(32) = "Ultrabreaker v" & ultrabreaker_version_major & "." & ultrabreaker_version_minor
-          .option(33) = "Kristopher <3 pizza!!!"
-          .callback = @menu_callback_info()
-        End With
-        menu.show(info)
-      Case 3
-        'cheats
-        cheat = Ucase(utility.gettext(cheat))
-        result.didcheat Or= (cheat <> "DIEDIEDIE" And _
-          cheat <> "SPEAK" And cheat <> "HARDCORE" and _
-          cheat <> "README")
-        
-        Select Case cheat
-        Case "5XOMATIC"
-          For i As Integer = 1 To brick.total
-            With brick.object(i)
-              .replication = 5
-            End With
-          Next i
-        Case "ABUNCH"
-          For i As Integer = 1 To 20
-            ball.add(1)
-          Next i
-        Case "BAZOOKASCHOOL"
-          data_rapidfire += 5
-        Case "BOMBPOWER"
-          with brick
-            If .total < .max Then
-              .add(screen.default_sx / 2, screen.default_sy / 2, _
-                brick_enum.explode, .5 * dsfactor, 4,,, true)
-              .graphic.set_mini(.object(.total))
-              .replicate(.object(.total))
-            End If
-          end with
-        Case "DIEDIEDIE"
-          result.liveslost = mode.lives
-          result.livesgained = 0
-          mode.lives = 0
-          ball.total = 0
-          paddle.total = 0
-        Case "FIRE"
-          For i As Integer = 1 To ball.total
-            ball.object(i).style = ball_enum.fire
-          Next i
-        Case "FREEBASIC"
-          orb.add()
-        Case "FREEZE"
-          If mode_speedfactor > 0 Then mode_speedfactor -= 1
-        Case "GARFIELD"
-          'more time: 5 minutes
-          setting.timelimit += fps * 60 * 5
-          If setting.timelimit > timemax * fps Then setting.timelimit = timemax * fps
-        Case "HARDCORE"
-          mode_hardcore = Not mode_hardcore
-        Case "INVERSE"
-          'invert all gravity (switch repel / attract effect)
-          For i As Integer = 1 To gravity.total
-            gravity.object(i).scale *= -1
-          Next i
-        Case "MASTERLASERS"
-          'full-power lasers
-          laser.power += laser.powerbonus_cheat
-          If laser.power = laser.powerbonus_cheat Then paddle.graphic.gfxreset()
-        Case "METALMAN"
-          weather.add(weather_enum.metal)
-        Case "NEWLIFE"
-          'extra life
-          result.livesgained += 10
-        Case "NINJASHIELDS"
-          For i As Integer = 1 To paddle.total
-            paddle.object(i).lives *= 1000
-          Next i
-        Case "PADDLESROCK"
-          'more paddles
-          For i As Integer = 1 To paddle_side_enum.max
-            If paddle.quantities(i) > 0 Then paddle.add(i)
-          Next i
-        Case "PIXEL"
-          mode_pixelation = true
-        Case "README"
-          shell("start readme.txt")
-        Case "SEASICK"
-          For i As Integer = 1 To brick.total
-            brick.graphic.erasebrick(brick.object(i))
-            With brick.object(i)
-              .bouncy = true
-              .independant = true
-              .xv = 1
-              .yv = 0
-            End With
-          Next i
-        Case "SKIPIT"
-          'levelup
-          data_collected_levelup = true
-        Case "SOLARIZE"
-          mode_invertedcolors = true
-        Case "SPEAK"
-          sound.speak("What do you want me to say?")
-          sound.speak(utility.gettext("I do not know english!"))
-        Case "SUPERCONTROL"
-          'super paddle / normal paddle (toggle)
-          For i As Integer = 1 To paddle.total
-            With paddle.object(i)
-              .style = 3 - .style
-            End With
-          Next i
-        Case "THEBOSS"
-          enemy.add(screen.default_sx / 2, screen.default_sy / 2, _
-            enemy_enum.destroyer, 2, 1500)
-        case "TORNADO"
-          mode_windfactor = 50
-        Case "TRAILS"
-          'ball trail (even if it's not a fireball)
-          mode_balltrail = true
-        case "TWSS"
-          for i as integer = 1 to ball.total
-            ball.object(i).scale *= 2
-            ball.object(i).fixstuckposition()
-          next i
-        Case "UNORB"
-          result.orbtokens = 0 'you might want this if you are testing your new level
-        Case "WALLSTREET"
-          'more points
-          result.scoregained = result.scoregained + 1000
-        Case "WARP"
-          mode_speedfactor += 1
-        case "WINDY"
-          mode_windfactor = 8
-        Case Else
-          key = utility.gettext("Fail!", true)
-          key = ""
-        End Select
-      Case 4
-        sound.set_volume()
-      Case 5
-        If menu.confirm("Quit?", true) Then result.didforfeit = true
-      End Select
-      menu.showclosing()
-      
-      'display game, then pause briefly before things move again
-      For i As Integer = 1 To 12
-        display()
-        Sleep(20, 1)
-      Next i
-      
-      While Len(Inkey()) > 0: Wend
-      If ..setting.mouseclipping Then Setmouse(,,, 1)
-      
-      framerate.fixtimeout()
     End Select
-    If utility.quitprogram(key, @framerate) Then result.didforfeit = true
-    
-    'return to menu if testing mode is over
-    If mode.tslave Then
-      If menu_callback_test(mainmenu, 0) < 0 Then
-        result.didforfeit = true
-      End If
-    End If
     
     framerate.move()
     
     'this is the main move() and display() stuff
-    If video.isStarted Then
-      'constant display rate of 30 FPS
-      For i As Integer = 1 To 4
-        move()
-        If get_winloss() Then Exit Do
-      Next i
-      display()
-      Sleep(5, 1)
-      video.capture()
-    Else
-      'replay speed controlled here
-      For i As Integer = 1 To mode_speedfactor
-        move()
-        If get_winloss() Then Exit Do
-      Next i
-      If framerate.candisplay() or forcedraw Then display(): forcedraw = false
-    End If
+    'replay speed controlled here
+    For i As Integer = 1 To mode_speedfactor
+      move()
+      If get_winloss() Then Exit Do
+    Next i
+    If framerate.candisplay() or forcedraw Then display(): forcedraw = false
     
   Loop
   #Else
@@ -615,33 +330,6 @@ Sub game_type.move ()
         If .launchdelay > 0 Then .launchdelay -= 1
       End With
     Next i
-    
-    'replay: record control, or set it
-    With replay
-      If mode.replayfile = 0 Then
-        .recordframe()
-      Else
-        'adjustment added to fix ushort limit
-        If .frame_current > 0 andalso .frame_current < .header.frame_total andalso .frame(.frame_current + 1).delay < .frame(.frame_current).delay Then
-          delayadjustment = &HFFFF
-        End If
-        
-        'replay
-        If ..setting.players = 1 Then
-          If .frame(.frame_current + 1).delay + delayadjustment <= frametotal And .frame_current < .header.frame_total Then .frame_current += 1
-          control(1) = .frame(.frame_current).to_controlstate()
-        Else
-          If .frame(.frame_current + 1).delay + delayadjustment <= frametotal And .frame_current < .header.frame_total Then .frame_current += 2
-          control(1) = .frame(.frame_current - 1).to_controlstate
-          control(2) = .frame(.frame_current).to_controlstate()
-        End If
-        
-        'force quit if the game ended
-        If frametotal = .frame(.header.frame_total).delay + delayadjustment Then
-          result.didforfeit = true
-        End If
-      End If
-    End With
     
     'allow rapid ball release from fast clicking
     If (.control(1).click And oldclickstate1 = false) Then
@@ -1225,11 +913,11 @@ Sub game_type.load ()
     Close #f
   End With
   
-  If version < version_min Then menu.notify("Level Too Old (v" & version & ", supports >= v" & version_min & ")")
-  If version >= version_max Then menu.notify("Level Too New (v" & version & ", supports < v" & version_max & ")")
+  If version < version_min Then utility.logerror("Level Too Old (v" & version & ", supports >= v" & version_min & ")")
+  If version >= version_max Then utility.logerror("Level Too New (v" & version & ", supports < v" & version_max & ")")
   
   If Len(setting.tip) > 0 Then
-    If ..setting.tips And mode.replayfile = 0 And mode.tslave = false Then
+    If ..setting.tips Then
       setting.tip = utility.gettext(setting.tip, true)
     End If
   End If
@@ -1242,14 +930,11 @@ sub game_type.summary ()
   'called when a game is finished (quit, completed, etc)
   
   dim as integer timebonus
-  Dim As menu_setting_type mainmenu
   
   data_isgameover = true 'in particular, used for not allowing score > required
-  replay.recordframe() 'make sure last frame is always recorded, for determining when game is over
   
   #ifndef server_validator
   'split-second animation
-  If video.isStarted Then video.finish()
   If ..setting.mouseclipping Then Setmouse(,,, 0)
   
   If result.instantrestart Then Exit Sub
@@ -1287,10 +972,10 @@ sub game_type.summary ()
   if data_getpreview and frametotal >= fps \ 2 then utility.graphic.savepreview()
   #Endif
   
-  If result.didforfeit Or mode.tslave Then Exit Sub
+  If result.didforfeit Then Exit Sub
   
   'not shown for testing because you don't want the game to get stuck (it wouldn't focus when testing starts)
-  If ..setting.tips And mode.replayfile = 0 Then
+  If ..setting.tips Then
     If result.didwin Then
       If Len(setting.tipwin) > 0 Then
         setting.tipwin = utility.gettext(setting.tipwin, true)
@@ -1305,258 +990,7 @@ sub game_type.summary ()
   timebonus = Int(timebonusmax * ((setting.timelimit - frametotal) / setting.timelimit) ^ timebonusexponent + .5)
   If timebonus < 0 Or result.didwin = false Then timebonus = 0
   result.scoregained = result.scoregained + timebonus
-  
-  'hardcore cheat / repeat
-  If mode_hardcore And mode.instantrestart Then
-    If result.scoregained <= main.levelpack.master_score(mode.level).score Then
-      result.instantrestart = true
-      Exit Sub
-    End If
-  End If
-  
-  'read-only stats menu; do not show on forfeit
-  With mainmenu
-    If result.didwin Then .title = "Level Complete" Else .title = "Level Lost"
-    .option_total = 4
-    
-    .option(1) = "" 'updated by callback
-    
-    .option(2) = "Lives: " & Abs(result.livesgained - result.liveslost)
-    If result.livesgained > result.liveslost Then
-      .option(2) += " won"
-    Else
-      .option(2) += " lost"
-    End If
-    If (mode.lives + result.livesgained - result.liveslost) < 0 Then
-      .option(2) += " (lost)"
-    Else
-      .option(2) += ", " & (mode.lives + result.livesgained - result.liveslost) & " remaining"
-    End If
-    
-    .option(3) = get_time()
-    'the one-second delay might make the time go beyond the time limit even if player won
-    If frametotal - fps <= setting.timelimit Then
-      If timebonus > 0 Then .option(3) += " (+" & timebonus & ")"
-    Else
-      .option(3) += " (lost)"
-    End If
-    
-    If mode.replayfile = 0 Then
-      If ..setting.autosave Then
-        .option(4) = "(Replay auto-saved)"
-      Else
-        .option(4) = "(Click to save game)"
-      End If
-    Else
-      .option(4) = "(Replay complete)"
-    End If
-    
-    .readonly = true
-    .screenshot_ison = false
-    .callback = @menu_callback_postgame()
-  End With
-  
-  result.savegame = (menu.show(mainmenu) = 4 And ..setting.autosave = false)
 end sub
-
-Sub game_replay_type.reset ()
-  'called when game is being set; after data_game is set
-  
-  Randomize()
-  
-  If game.mode.replayfile = 0 Then
-    'going to save recording
-    
-    With header
-      .submitted = false
-      .player = ""
-      .timestamp = Date() + Time()
-      
-      .levelpack = main.levelpack.title
-      .levelnumber = game.mode.level
-      
-      .seed = Rnd() * 10000
-      'score set at end of game
-      
-      'pull some settings from data_game
-      .lives = game.mode.lives
-      .orbtokens = game.mode.orbtokens
-      .players = setting.players
-      .speed = game.mode.speed
-      
-      .frame_total = 0
-    End With
-  Else
-    'load from file, then replay
-    'note: the levelpack and levelnumber don't matter here
-    
-    Dim As Integer f
-    
-    'mode.replayfile = true
-    frame_current = 0 'if frame(frame_current).delay = frame_total then load state: frame_current ++
-    
-    'load replay from file
-    If game.mode.replayfile = -1 Then
-      Dim As String temp = Trim(Command(2))
-      If Right(temp, 4) <> ".ubr" Then temp += ".ubr"
-      f = utility.openfile(temp, utility_file_mode_enum.for_binary)
-    Else
-      f = utility.openfile("data/levelpacks/" & main.levelpack.title & "/recordings/" & _
-        game.mode.level & "/" & game.mode.replayfile & ".ubr", utility_file_mode_enum.for_binary)
-    End If
-    Get #f, 1, header
-    
-    For i As Integer = 1 To header.frame_total
-      Get #f, Sizeof(game_replay_header_type) + (i - 1) * Sizeof(game_replay_frame_type) + 1, frame(i)
-    Next i
-    Close #f
-    
-    'put some settings into data_game
-    With header
-      game.mode.lives = .lives
-      game.mode.orbtokens = .orbtokens
-      setting.players = .players
-      game.mode.speed = .speed
-    End With
-  End If
-  
-  Randomize(header.seed)
-End Sub
-
-Sub game_replay_type.recordframe ()
-  'save one frame to memory
-  
-  If header.frame_total + 2 > frame_max Then Exit Sub
-  
-  If setting.players = 1 Then
-    If game.data_isgameover orelse _
-      (header.frame_total = 0 orelse frame(header.frame_total).equals(game.control(1)) = false) Then
-      header.frame_total += 1
-      frame(header.frame_total).set(game.frametotal, game.control(1))
-    End If
-  Else
-    If game.data_isgameover orelse _
-      (header.frame_total = 0 orelse _
-      frame(header.frame_total - 1).equals(game.control(1)) = false orelse _
-      frame(header.frame_total).equals(game.control(2)) = false) Then
-      
-      header.frame_total += 2
-      frame(header.frame_total - 1).set(game.frametotal, game.control(1))
-      frame(header.frame_total).set(game.frametotal, game.control(2))
-    End If
-  End If
-End Sub
-
-Sub game_replay_type.save ()
-  'save replay
-  
-  Dim As Integer f, temp
-  dim as string levelpackrecordingspath = "data/levelpacks/" & main.levelpack.title & "/recordings/"
-  Dim As String totalfile = levelpackrecordingspath & game.mode.level & "/total.txt"
-  
-  'get player name
-  header.player = Left(main.player.lastplayer & Space(16), 16)
-  header.score = game.result.scoregained
-  
-  'create replay folder and total.txt for level, add level to list (if needed)
-  f = utility.openfile(totalfile, utility_file_mode_enum.for_input, true)
-  If f = false Then
-    'this is the first recording for this level, so add it to the list of levels that have recordings
-    Dim As Integer numbers(1 To menu_setting_type.option_max), number_total, didaddnumber
-    
-    f = utility.openfile(levelpackrecordingspath & "list.txt", utility_file_mode_enum.for_input)
-    While Eof(f) = false
-      number_total += 1
-      Input #f, numbers(number_total)
-    Wend
-    Close #f
-
-    f = utility.openfile(levelpackrecordingspath & "list.txt", utility_file_mode_enum.for_output)
-    If number_total = 0 Then
-      Print #f, game.mode.level
-    Else
-      For i As Integer = 1 To number_total
-        If game.mode.level < numbers(i) And didaddnumber = false Then Print #f, game.mode.level: didaddnumber = true
-        Print #f, numbers(i)
-      Next i
-      If didaddnumber = false Then Print #f, game.mode.level
-    End If
-    Close #f
-    
-    Mkdir(levelpackrecordingspath & game.mode.level)
-    f = utility.openfile(totalfile, utility_file_mode_enum.for_output)
-    Print #f, 1
-    Close #f
-    temp = 1 'replay number (for filename)
-  Else
-    Close #f
-    
-    f = utility.openfile(totalfile, utility_file_mode_enum.for_input)
-    Input #f, temp
-    Close #f
-    temp += 1
-    
-    f = utility.openfile(totalfile, utility_file_mode_enum.for_output)
-    Print #f, temp
-    Close #f
-  End If
-  
-  'save file
-  With game.replay
-    .header.hash()
-    f = utility.openfile(levelpackrecordingspath & _
-      game.mode.level & "/" & temp & ".ubr", utility_file_mode_enum.for_binary)
-    Put #f, 1, .header
-    For i As Integer = 1 To .header.frame_total
-      Put #f, Sizeof(game_replay_header_type) + (i - 1) * Sizeof(game_replay_frame_type) + 1, .frame(i)
-    Next i
-    Close #f
-  End With
-End Sub
-
-Function game_replay_frame_type.equals (Byref c As game_control_type) As Integer
-  Return x = c.x And y = c.y And b = c.click
-End Function
-
-Sub game_replay_frame_type.set (Byval frame As Integer, Byref c As game_control_type)
-  delay = frame And &HFFFF 'ushort -> integer conversion
-  x = c.x
-  y = c.y
-  b = c.click
-End Sub
-
-Function game_replay_frame_type.to_controlstate () As game_control_type
-  Return Type(x, y, b)
-End Function
-
-Function game_replay_header_type.checkhash () As Integer
-  Dim As Integer h1 = hash1, h2 = hash2, result
-  
-  'recalculate hash to test it
-  hash()
-  result = ((h1 = hash1) And (h2 = hash2))
-  hash1 = h1
-  hash2 = h2
-  
-  Return result
-End Function
-
-Sub game_replay_header_type.hash ()
-  'hash1 based on player name, score, seed
-  'hash2 based on orbtokens, players, speed, lives, levelnumber
-  'the formula here is arbitrary and independent of the other code
-  
-  Dim As Integer d1
-  
-  d1 = 0
-  For i As Integer = 0 To Len(Trim(player)) - 1
-    d1 += player[i] Shl i
-  Next i
-  hash1 = ((d1 Xor score) + Len(Trim(player))) Xor (*(cast(Integer Ptr, @seed) + 1))
-  
-  d1 = orbtokens * 7 + players * 11 + lives * 23 + levelnumber * 43
-  hash2 = d1 Xor Cint(speed * 100000)
-End Sub
 
 property game_result_type.scoregained () As Integer
   Return _scoregained

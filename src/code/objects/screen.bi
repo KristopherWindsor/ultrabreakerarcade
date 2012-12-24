@@ -18,8 +18,7 @@ Type screen_type
   Declare Function scale_y Overload (Byval y As Double) As Integer
   Declare Function unscale_x (Byval x As Integer) As Integer
   Declare Function unscale_y (Byval y As Integer) As Integer
-  Declare Sub set Overload () 'menu prompts for dimensions
-  Declare Sub set Overload (Byval x As Integer, Byval y As Integer)
+  Declare Sub set (Byval x As Integer, Byval y As Integer)
   Declare Sub start ()
   
   'note: all variables need to be set at the same time or they will have conflicting values

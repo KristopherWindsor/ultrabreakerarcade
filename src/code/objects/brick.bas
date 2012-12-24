@@ -184,8 +184,7 @@ Sub brick_type.display ()
   End With
   
   alpha = setting.alphavalue
-  If weather.is_metal Or game.mode_invertedcolors Or game.mode_pixelation Or _
-    game.video.isStarted Then alpha = 255
+  If weather.is_metal Or game.mode_invertedcolors Or game.mode_pixelation Then alpha = 255
   
   If game.mode_shooter Then
     'v-scrolling

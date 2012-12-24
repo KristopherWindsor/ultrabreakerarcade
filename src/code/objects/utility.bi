@@ -114,8 +114,6 @@ type utility_type
   declare function openfile (Byref filename As String, _
     Byval mode As Integer, Byval ignoreerrors As Integer = false) As Integer
   declare function percentage (p as double) as string
-  declare function quitprogram (Byref key As String = "", _
-    framerate As utility_framerate_type Ptr = 0) As Integer
   declare sub showloading (Byref text As String)
   
   #ifndef server_validator

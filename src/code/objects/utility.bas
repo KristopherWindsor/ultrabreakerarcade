@@ -216,7 +216,6 @@ Function utility_type.gettext (Byref default As String = "", _
       'unless closing function, play a sound
       sound.add(sound_enum.menu_changeselected)
     End Select
-    If quitprogram(key, @framerate) Then quit = true
     
     If readonly = false Then
       Select Case key
@@ -431,24 +430,6 @@ End Function
 function utility_type.percentage (p as double) as string
   return cint(100 * p) & "%"
 end function
-
-Function utility_type.quitprogram (Byref key As String = "", framerate As utility_framerate_type Ptr = 0) As Integer
-  'the "quit program" flag is set and accessed by menu / in-game / gallery / gettext
-  Static As Integer q, depth
-  
-  'depth: prevents recursive menu / quitprogram calls
-  depth += 1
-  If key = Chr(255, 107) and depth = 1 Then
-    If menu.confirm("Quit?") Then
-      sound.add(sound_enum.menu_select)
-      q = true
-    End If
-    If framerate <> 0 Then framerate->fixtimeout()
-  End If
-  depth -= 1
-  
-  Return q
-End Function
 
 Sub utility_type.showloading (Byref text As String)
   #ifndef server_validator

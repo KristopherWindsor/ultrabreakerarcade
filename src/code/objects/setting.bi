@@ -10,12 +10,6 @@ Type setting_type
   const maxplayers = 2
   
   Declare Sub finish ()
-  Declare Sub set_controls ()
-  Declare Sub set_graphics ()
-  Declare Sub set_multiplayer ()
-  Declare Sub set_performance ()
-  Declare Sub set_recordings ()
-  Declare Sub set_tips ()
   Declare Sub start ()
   
   As Integer alphavalue    '255, 191, 127, 63

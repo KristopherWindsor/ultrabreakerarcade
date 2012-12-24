@@ -48,7 +48,6 @@
   #include once "image/imagescaler.bas"
   #include once "image/multiput.bas"
   #include once "sound/audio.bas"
-  #include once "video/avicapture.bas"
   
   'libraries
   #inclib "fbpng"
@@ -89,8 +88,7 @@ End Enum
 #include once "objects/bonus.bi"
 #include once "objects/screen.bi"
 #include once "objects/utility.bi"
-#include once "objects/main.bi"
-#include once "objects/menu.bi"
+#include once "objects/arcademain.bi"
 #include once "objects/enemy.bi"
 #include once "objects/explodepaddle.bi"
 #include once "objects/gravity.bi"
@@ -112,8 +110,7 @@ End Enum
 #include once "objects/gravity.bas"
 #include once "objects/item.bas"
 #include once "objects/laser.bas"
-#include once "objects/main.bas"
-#include once "objects/menu.bas"
+#include once "objects/arcademain.bas"
 #include once "objects/orb.bas"
 #include once "objects/paddle.bas"
 #include once "objects/screen.bas"
