@@ -86,27 +86,37 @@ function main_type.intro() as integer
   return true
 end function
 
-sub main_type.play()
+function main_type.play() as integer
+  dim as integer score
+  
   With game.mode
-    .level = 1'(levelpack.arcade_save.level Mod levelpack.level_total) + 1
-    .lives = 1'levelpack.arcade_save.lives
-    .speed = sqr(2)'arcadespeedfactor ^ Int(levelpack.arcade_save.level / levelpack.level_total)
-    .orbtokens = 0'levelpack.arcade_save.orbtokens
+    .level = 1
+    .lives = arcadelives
+    .speed = sqr(2)
+    .orbtokens = 0
     .instantrestart = false
   end with
   
-  game.run()
+  do
+    game.run()
+    
+    with game.result
+      score += .scoregained
+      if not .didwin then exit do
+      
+      if game.mode.level + 1 = levelpack.level_total then
+        game.mode.level = 1
+        game.mode.speed *= sqr(2)
+      else
+        game.mode.level += 1
+      end if
+      game.mode.lives += .livesgained - .liveslost
+      game.mode.orbtokens = .orbtokens
+    end with
+  loop
   
-  With game.mode
-    .level = 2'(levelpack.arcade_save.level Mod levelpack.level_total) + 1
-    .lives = 1'levelpack.arcade_save.lives
-    .speed = sqr(2)'arcadespeedfactor ^ Int(levelpack.arcade_save.level / levelpack.level_total)
-    .orbtokens = 0'levelpack.arcade_save.orbtokens
-    .instantrestart = false
-  end with
-  
-  game.run()
-end sub
+  return score
+end function
 
 Sub main_levelpack_type.start ()
   Dim As Integer f

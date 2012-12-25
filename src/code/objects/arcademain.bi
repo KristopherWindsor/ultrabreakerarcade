@@ -74,7 +74,7 @@ type main_type
   declare sub choose_world ()
   declare sub gameover ()
   declare function intro () as integer
-  declare sub play ()
+  declare function play () as integer
   
   as main_levelpack_type levelpack
   as main_player_type player
