@@ -21,7 +21,6 @@ Type game_mode_type
   As Integer lives
   As Integer orbtokens
   As Double speed 'ball speed
-  as integer instantrestart
 End Type
 
 'formerly data_game.data_*
@@ -45,12 +44,9 @@ type game_result_type
   declare property scoregained (byval newscore as integer)
   
   'set by game() after level is complete / failed
-  As Integer didcheat 'no points for you!
-  As Integer didforfeit 'if forfeit, possibly let user restart level, or check didwin for win / loss
   As Integer didwin
   As Integer liveslost, livesgained
   As Integer orbtokens 'total left remaining (will be mode_orbtokens if no bonuses collected)
-  as integer instantrestart 'restart level after this is closed?
   
   'As Integer result_scoregained is replaced by property
   as integer _scoregained 'data for property

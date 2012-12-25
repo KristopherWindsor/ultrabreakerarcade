@@ -94,7 +94,6 @@ function main_type.play() as integer
     .lives = arcadelives
     .speed = sqr(2)
     .orbtokens = 0
-    .instantrestart = false
   end with
   
   do

@@ -53,13 +53,10 @@ Sub game_type.reset ()
   end with
   
   with result
-    .didcheat = false
-    .didforfeit = false
     .didwin = false
     .liveslost = 0
     .livesgained = 0
     .orbtokens = mode.orbtokens
-    .instantrestart = false
     
     .scoregained = 0 'property call updates master score
   End With
@@ -206,7 +203,7 @@ Sub game_type.run ()
   Dim As Integer f, screenshot, quit
   dim as integer forcedraw, spresses 'forcedraw after pressing "s"
   Dim As Double menu_t
-  Dim As String key, key2
+  Dim As String key
   
   load()
   superfluous If ..setting.mouseclipping Then Setmouse(,,, 1)
@@ -214,38 +211,6 @@ Sub game_type.run ()
   #ifndef server_validator
   Do
     key = Inkey()
-    If Len(key) = 0 Then key = key2
-    key2 = ""
-    
-    Select Case key
-    Case ""
-    Case "m"
-      sound.audio.fire_music()
-    Case "q"
-      result.didforfeit = true
-    Case "r"
-      If mode.instantrestart Then
-        result.instantrestart = true
-        Exit Do
-      End If
-    Case "s"
-      'no "slow mo" tricks allowed
-      spresses += 1
-      if spresses = 10 then
-        sound.add(sound_enum.thud)
-        result.didcheat = true
-      end if
-      
-      While Len(Inkey()) > 0: Wend
-      Do
-        sound.move()
-        Sleep(1000) 'may replay this much of a track before going to the next one
-        key2 = Inkey()
-      Loop Until Len(key2) > 0
-      framerate.fixtimeout()
-      forcedraw = true
-    End Select
-    
     framerate.move()
     
     'this is the main move() and display() stuff
@@ -598,14 +563,11 @@ Function game_type.get_winloss () As Integer
     'masterdone = true when you've lost a life
     'but if the game is over, don't bother setting masterdone (that way, you can get the timebonus if you won at the same time)
     If .livesgained - .liveslost < 0 And gameover = false Then data_masterdone = true
-    
-    'can't forfeit on the last frame, especially if game replay is over
-    If gameover Then .didforfeit = false
   End With
   
   'if gameover then sound.add(sound_enum.main_levelcomplete)
   
-  Return gameover Or result.didforfeit
+  Return gameover
 End Function
 
 Sub game_type.load ()
@@ -937,8 +899,6 @@ sub game_type.summary ()
   'split-second animation
   If ..setting.mouseclipping Then Setmouse(,,, 0)
   
-  If result.instantrestart Then Exit Sub
-  
   With ball.object(1)
     If ball.total = 0 Then
       ball.total = 1
@@ -957,22 +917,12 @@ sub game_type.summary ()
       framerate.move()
       .scale += ball.scalemax / 30
       If framerate.candisplay() Then display()
-      
-      'instant restart after game over
-      If Inkey() = "r" Then
-        If mode.instantrestart Then
-          result.instantrestart = true
-          Exit Sub
-        End If
-      End If
     Wend
   End With
   
   'save level preview
   if data_getpreview and frametotal >= fps \ 2 then utility.graphic.savepreview()
   #Endif
-  
-  If result.didforfeit Then Exit Sub
   
   'not shown for testing because you don't want the game to get stuck (it wouldn't focus when testing starts)
   If ..setting.tips Then
