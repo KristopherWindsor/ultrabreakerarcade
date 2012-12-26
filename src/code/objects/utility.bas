@@ -679,28 +679,14 @@ Sub utility_graphic_type.start ()
   #ifndef server_validator
   ball = utility.createimage(ball_sx, ball_sy mop("utility ball"))
   utility.loadimage("ball", ball)
+  menubackground = utility.createimage(menubackground_sx, menubackground_sy mop("utility menubackground"))
+  utility.loadimage("menubackground", menubackground)
   font_temp = utility.createimage(1000, 100 mop("utility font temp"))
   #Endif
 End Sub
 
 Sub utility_graphic_type.screenchange ()
   #ifndef server_validator
-  
-  With screen
-    If menu > 0 Then utility.deleteimage(menu mop("utility menu"))
-    If .view_sx = 320 And .view_sy = 240 Then
-      menu = utility.createimage(320, 240 mop("utility menu"))
-      utility.loadimage("menu-320-240", menu)
-    Elseif .view_sx = 640 And .view_sy = 480 Then
-      menu = utility.createimage(640, 480 mop("utility menu"))
-      utility.loadimage("menu-640-480", menu)
-    Else
-      menu = utility.createimage(800, 600 mop("utility menu"))
-      utility.loadimage("menu-800-600", menu)
-    End If
-  End With
-  
-  'ball and menu are scaled by the menu each time / in real time
   
   If previewshot > 0 Then utility.deleteimage(previewshot mop("utility previewshot"))
   previewshot = utility.createimage(screen.screen_sx, screen.screen_sy mop("utility previewshot"))
@@ -719,7 +705,7 @@ End Sub
 Sub utility_graphic_type.finish ()
   #ifndef server_validator
   utility.deleteimage(ball mop("utility ball"))
-  utility.deleteimage(menu mop("utility menu"))
+  utility.deleteimage(menubackground mop("utility menubackground"))
   utility.deleteimage(previewshot mop("utility previewshot"))
   utility.deleteimage(previewshot_thumb mop("utility previewshot thumb"))
   utility.deleteimage(screenshot mop("utility screenshot"))

@@ -80,10 +80,51 @@ sub main_type.gameover()
 end sub
 
 function main_type.intro() as integer
-  cls
-  print "intro screen"
-  sleep
-  return true
+  #define text1 "Ultrabreaker"
+  #define text1x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text1) / screen.scale) / 2
+
+  #define text2 "Press button to play"
+  #define text2x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text2) / screen.scale) / 2
+
+  dim as integer rotatecountdown = 20000
+  dim as double angle, backgroundangle
+  Dim As utility_framerate_type framerate = utility_framerate_type()
+
+  framerate.reset()
+  
+  while inkey<>chr(27)'need to know the 1-p 2-p start buttons
+    framerate.move()
+    
+    angle += .02
+    if backgroundangle > 0 then
+      backgroundangle += .02
+      if backgroundangle > 2 * pi then backgroundangle = 0
+    else
+      rotatecountdown -= 1
+      if rotatecountdown <= 0 then
+        rotatecountdown = 20000
+        backgroundangle = .0001
+      end if
+    end if
+    
+    If framerate.candisplay() Then
+      screenlock()
+      if backgroundangle > 0 then
+        cls()
+        multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, 1, 0, backgroundangle)
+      else
+        multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, 1, 0, backgroundangle , 100)
+        if framerate.loop_total mod 18 >= 2 then
+          utility.font.show(text1, text1x, screen.default_sy * .85)
+          utility.font.show(text2, text2x, screen.default_sy * .90)
+        end if
+      end if
+      multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.ball, 1, 0, angle)
+      screenunlock()
+    end if
+  wend
+  
+  return false
 end function
 
 function main_type.play() as integer

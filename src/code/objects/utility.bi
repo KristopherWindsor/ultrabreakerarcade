@@ -62,6 +62,7 @@ End Type
 
 Type utility_graphic_type
   Const ball_sx = 240, ball_sy = ball_sx
+  const menubackground_sx = 800, menubackground_sy = 600
   'Const menu_sx = data_screen_type.default_sx, menu_sy = data_screen_type.default_sy
   
   Declare Sub start ()
@@ -72,7 +73,7 @@ Type utility_graphic_type
   declare sub loadpreview () 'load next preview (needs to be called repeatedly)
   declare sub savepreview () 'save a png level preview
   
-  superfluous As fb.image Ptr ball, menu
+  superfluous As fb.image Ptr ball, menubackground
   'window size (like screenshot, but only for level previews); 320 * 240
   superfluous as fb.image ptr previewshot, previewshot_thumb
   'window size, always; x * 240
