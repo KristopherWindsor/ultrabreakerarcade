@@ -35,6 +35,7 @@ Sub main_type.start ()
   utility.start()
   game.start()
   
+  main.controls.load()
   main.player.start()
   main.levelpack.start()
   main.programstarted = true
@@ -92,8 +93,12 @@ function main_type.intro() as integer
 
   framerate.reset()
   
-  while inkey<>chr(27)'need to know the 1-p 2-p start buttons
+  while true
     framerate.move()
+    
+    if multikey(controls.forcequit) then return false
+    if multikey(controls.p1_start) then setting.players = 1: return true
+    if multikey(controls.p2_start) then setting.players = 2: return true
     
     angle += .02
     if backgroundangle > 0 then
@@ -157,6 +162,28 @@ function main_type.play() as integer
   
   return score
 end function
+
+sub main_controls_type.load ()
+  dim as integer f
+  
+  f = utility.openfile("data/controls.txt", utility_file_mode_enum.for_input)
+  input #f, p1_up
+  input #f, p1_down
+  input #f, p1_left
+  input #f, p1_right
+  input #f, p1_start
+  input #f, p1_fire
+  input #f, p1_alt
+  input #f, p2_up
+  input #f, p2_down
+  input #f, p2_left
+  input #f, p2_right
+  input #f, p2_start
+  input #f, p2_fire
+  input #f, p2_alt
+  input #f, forcequit
+  close #f
+end sub
 
 Sub main_levelpack_type.start ()
   Dim As Integer f

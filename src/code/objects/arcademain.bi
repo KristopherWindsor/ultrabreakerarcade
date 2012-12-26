@@ -1,4 +1,14 @@
 
+type main_controls_type
+  declare sub load ()
+  
+  as integer p1_up, p1_down, p1_left, p1_right
+  as integer p1_start, p1_fire, p1_alt
+  as integer p2_up, p2_down, p2_left, p2_right
+  as integer p2_start, p2_fire, p2_alt
+  as integer forcequit
+end type
+
 type main_levelpack_onepack_type
   
   declare property showname () as string
@@ -76,6 +86,7 @@ type main_type
   declare function intro () as integer
   declare function play () as integer
   
+  as main_controls_type controls
   as main_levelpack_type levelpack
   as main_player_type player
   
