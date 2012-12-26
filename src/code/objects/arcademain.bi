@@ -1,6 +1,7 @@
 
 type main_controls_type
   declare sub load ()
+  declare function ink(multikey_code as integer) as string
   
   as integer p1_up, p1_down, p1_left, p1_right
   as integer p1_start, p1_fire, p1_alt
@@ -64,7 +65,7 @@ type main_type
   declare sub start ()
   declare sub screenchange ()
   declare sub finish ()
-  declare sub choose_world ()
+  declare function choose_world () as integer
   declare sub gameover ()
   declare function intro () as integer
   declare function play () as integer

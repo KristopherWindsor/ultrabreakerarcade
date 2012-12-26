@@ -1,16 +1,12 @@
 
 Sub main_type.run ()
-  Const intro_length = 1
-  
-  Dim As Integer quit
-  Dim As utility_framerate_type framerate
-  
   start()
   
   while intro()
-    choose_world()
-    play()
-    gameover()
+    if choose_world() then
+      play()
+      gameover()
+    end if
   wend
   
   finish()
@@ -64,9 +60,35 @@ Sub main_type.finish ()
   utility.finish()
 End Sub
 
-sub main_type.choose_world()
-  levelpack.load(1)
-end sub
+function main_type.choose_world() as integer
+  dim as integer selected = 1
+  dim as string key
+  Dim As utility_framerate_type framerate = utility_framerate_type()
+
+  do
+    framerate.move()
+    
+    key = inkey()
+    if key = controls.ink(controls.forcequit) then return false
+    if key = controls.ink(controls.p1_start) or key = controls.ink(controls.p2_start) then return false
+    if key = controls.ink(controls.p1_left) and selected > 1 then selected -= 1
+    if key = controls.ink(controls.p1_right) and selected < levelpack.list_total then selected += 1
+    
+    if framerate.candisplay() then
+      screenlock()
+      cls
+      print "choose world"
+      print levelpack.list(selected).title,selected
+      screenunlock()
+    end if
+  loop
+  
+  
+  
+  
+  levelpack.load(selected)
+  return true
+end function
 
 sub main_type.gameover()
   cls
@@ -87,16 +109,18 @@ function main_type.intro() as integer
 
   dim as integer rotatecountdown = 20000
   dim as double angle, backgroundangle
+  dim as string key
   Dim As utility_framerate_type framerate = utility_framerate_type()
 
   framerate.reset()
   
-  while true
+  do
     framerate.move()
     
-    if multikey(controls.forcequit) then return false
-    if multikey(controls.p1_start) then setting.players = 1: return true
-    if multikey(controls.p2_start) then setting.players = 2: return true
+    key = inkey()
+    if key = controls.ink(controls.forcequit) then return false
+    if key = controls.ink(controls.p1_start) then setting.players = 1: return true
+    if key = controls.ink(controls.p2_start) then setting.players = 2: return true
     
     angle += .02
     if backgroundangle > 0 then
@@ -125,7 +149,7 @@ function main_type.intro() as integer
       multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.ball, 1, 0, angle)
       screenunlock()
     end if
-  wend
+  loop
   
   return false
 end function
@@ -182,6 +206,31 @@ sub main_controls_type.load ()
   input #f, forcequit
   close #f
 end sub
+
+function main_controls_type.ink(multikey_code as integer) as string
+  'function is complete enough for our purposes
+  'converts multikey code to inkey result string
+  
+  if multikey_code >= fb.SC_1 and multikey_code <= fb.SC_9 then return chr(asc("1") + multikey_code - fb.SC_1)
+  
+  select case multikey_code
+  case fb.SC_ESCAPE: return chr(27)
+  case fb.SC_UP: return chr(255, 72)
+  case fb.SC_DOWN: return chr(255, 80)
+  case fb.SC_LEFT: return chr(255, 75)
+  case fb.SC_RIGHT: return chr(255, 77)
+  case fb.SC_W: return "w"
+  case fb.SC_A: return "a"
+  case fb.SC_S: return "s"
+  case fb.SC_D: return "d"
+  case fb.SC_F: return "f"
+  case fb.SC_C: return "c"
+  case fb.SC_K: return "k"
+  case fb.SC_COMMA: return ","
+  end select
+  
+  return ""
+end function
 
 Sub main_levelpack_type.start ()
   Dim As Integer f
