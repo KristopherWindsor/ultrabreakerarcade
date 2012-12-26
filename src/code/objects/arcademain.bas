@@ -36,7 +36,6 @@ Sub main_type.start ()
   game.start()
   
   main.controls.load()
-  main.player.start()
   main.levelpack.start()
   main.programstarted = true
   
@@ -56,7 +55,6 @@ End Sub
 Sub main_type.finish ()
   superfluous sound.speak("", true)
   
-  main.player.finish()
   main.levelpack.finish()
   
   game.finish()
@@ -84,7 +82,7 @@ function main_type.intro() as integer
   #define text1 "Ultrabreaker"
   #define text1x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text1) / screen.scale) / 2
 
-  #define text2 "Press button to play"
+  #define text2 "Press START to play"
   #define text2x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text2) / screen.scale) / 2
 
   dim as integer rotatecountdown = 20000
@@ -119,8 +117,8 @@ function main_type.intro() as integer
         multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, 1, 0, backgroundangle)
       else
         multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, 1, 0, backgroundangle , 100)
-        if framerate.loop_total mod 18 >= 2 then
-          utility.font.show(text1, text1x, screen.default_sy * .85)
+        utility.font.show(text1, text1x, screen.default_sy * .83)
+        if framerate.loop_total mod 18 >= 9 then
           utility.font.show(text2, text2x, screen.default_sy * .90)
         end if
       end if
@@ -312,51 +310,3 @@ property main_levelpack_onepack_type.showname () As String
   If iscompleted = false Then prefix = "* "
   Return prefix & title
 End property
-
-Sub main_player_type.start ()
-  #ifndef server_validator
-  Dim As Integer f
-  
-  f = utility.openfile("data/players.txt", utility_file_mode_enum.for_input)
-  While Eof(f) = false
-    If name_total < name_max Then name_total += 1
-    Line Input #f, Name(name_total)
-  Wend
-  Close #f
-  #Endif
-End Sub
-
-Sub main_player_type.finish ()
-  #ifndef server_validator
-  Dim As Integer f
-  
-  f = utility.openfile("data/players.txt", utility_file_mode_enum.for_output)
-  For i As Integer = 1 To name_total
-    Print #f, Name(i)
-  Next i
-  Close #f
-  #Endif
-End Sub
-
-property main_player_type.lastplayer() as string
-  if name_total < 1 then return anonymous
-  return name(1)
-end property
-
-property main_player_type.lastplayer(value as string)
-  dim as integer index
-  
-  for i as integer = 1 to name_total
-    if name(i) = value then index = i
-  next i
-  
-  if index = 0 then
-    if name_total < name_max then name_total += 1
-    index = name_total
-    name(index) = value
-  end if
-  
-  for i as integer = index - 1 to 1 step -1
-    swap name(i), name(i + 1)
-  next i
-end property

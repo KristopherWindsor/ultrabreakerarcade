@@ -56,23 +56,6 @@ Type main_levelpack_type
   As main_levelpack_onepack_type list(1 To list_max)
 End Type
 
-Type main_player_type
-  Const name_max = 128
-  const anonymous = "Guest"
-  
-  Declare Sub start ()
-  Declare Sub finish ()
-  
-  Declare sub selectname ()
-  'Declare Function get_password (Byref pname As String) As String
-  
-  declare property lastplayer() as string
-  declare property lastplayer(value as string)
-  
-  As Integer name_total
-  As String Name(1 To name_max)
-End Type
-
 type main_type
   const gallery_thumb_sx = 320, gallery_thumb_sy = 240
   const arcadelives = 5, arcadespeedfactor = sqr(2)
@@ -88,7 +71,6 @@ type main_type
   
   as main_controls_type controls
   as main_levelpack_type levelpack
-  as main_player_type player
   
   as integer programstarted
 end type
