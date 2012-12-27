@@ -785,7 +785,7 @@ Sub game_type.load ()
       Case "PADDLESIZE"
         If arg_total = 1 Then
           With paddle
-            .data_scale_original = Val(arg(1)) * .scale_factor / ..setting.players
+            .data_scale_original = Val(arg(1)) * .scale_factor
             .set_scale(.data_scale_original)
           End With
         End If

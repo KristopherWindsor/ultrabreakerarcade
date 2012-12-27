@@ -10,7 +10,7 @@ End Sub
 Sub paddle_type.reset ()
   data_defaultstyle = paddle_enum.normal
   data_sticky = false
-  data_scale_original = scale_factor / setting.players
+  data_scale_original = scale_factor
   data_scale = data_scale_original
   For i As Integer = 1 To paddle_side_enum.max
     quantities(i) = 0
