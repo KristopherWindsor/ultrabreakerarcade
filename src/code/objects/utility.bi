@@ -73,6 +73,9 @@ Type utility_graphic_type
   declare sub loadpreview () 'load next preview (needs to be called repeatedly)
   declare sub savepreview () 'save a png level preview
   
+  declare sub loadlevelpackpreview () 'load next preview (needs to be called repeatedly)
+  declare sub reloadlevelpackpreview (index as integer)
+  
   superfluous As fb.image Ptr ball, menubackground
   'window size (like screenshot, but only for level previews); 320 * 240
   superfluous as fb.image ptr previewshot, previewshot_thumb
@@ -82,6 +85,9 @@ Type utility_graphic_type
   
   superfluous as integer levelpreview_total
   superfluous as fb.image ptr levelpreview(1 to 256) 'max levels per pack
+  
+  superfluous as integer levelpackpreview_total
+  superfluous as fb.image ptr levelpackpreview(1 to 32) 'max levelpacks
   
   As Integer totalimages 'total number of images loaded
 End Type

@@ -712,6 +712,11 @@ Sub utility_graphic_type.finish ()
   utility.deleteimage(screenshot_thumb mop("utility screenshot thumb"))
   utility.deleteimage(font_temp mop("utility font_temp"))
   clearpreviews()
+  
+  for i as integer = 1 to levelpackpreview_total
+    utility.deleteimage(levelpackpreview(i) mop("utility levelpackpreview"))
+  next i
+  levelpackpreview_total = 0
   #Endif
 End Sub
 
@@ -723,6 +728,51 @@ Sub utility_graphic_type.clearpreviews ()
     utility.deleteimage(levelpreview(i) mop("utility levelpreview"))
   next i
   levelpreview_total = 0
+  #endif
+end sub
+
+sub utility_graphic_type.loadlevelpackpreview ()
+  #ifndef server_validator
+  
+  #define lppt utility.graphic.levelpackpreview_total
+  
+  if lppt >= main.levelpack.list_total then return
+  
+  lppt += 1
+  
+  dim as integer f
+  dim as string filename
+  
+  filename = "levelpacks/" & lcase(main.levelpack.list(lppt).title) & "/1"
+  var g = utility.createimage(320, 240 mop("utility levelpackpreview"), color_enum.black)
+  line g, (9, 9) - (310, 230), color_enum.transparent, BF
+  draw string g, (72, 100), "[No preview available]", color_enum.black
+  f = utility.openfile("data/" & filename & ".png", utility_file_mode_enum.for_input, true)
+  if f > 0 then
+    close #f
+    utility.loadimage("../" & filename, g)
+  end if
+  
+  utility.graphic.levelpackpreview(lppt) = g
+  
+  #endif
+end sub
+
+sub utility_graphic_type.reloadlevelpackpreview (index as integer)
+  #ifndef server_validator
+  
+  dim as integer f
+  dim as string filename
+  
+  if utility.graphic.levelpackpreview(index) = 0 then return
+  
+  filename = "levelpacks/" & lcase(main.levelpack.list(index).title) & "/1"
+  f = utility.openfile("data/" & filename & ".png", utility_file_mode_enum.for_input, true)
+  if f > 0 then
+    close #f
+    utility.loadimage("../" & filename, utility.graphic.levelpackpreview(index))
+  end if
+  
   #endif
 end sub
 

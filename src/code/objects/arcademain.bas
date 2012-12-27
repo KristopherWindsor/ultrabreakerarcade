@@ -61,33 +61,61 @@ Sub main_type.finish ()
 End Sub
 
 function main_type.choose_world() as integer
-  dim as integer selected = 1
+  #ifndef server_validator
+  
+  #define text1 "Ultrabreaker"
+  #define text1x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text1) / screen.scale) / 2
+
+  #define text2 "Press START to play"
+  #define text2x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text2) / screen.scale) / 2
+
+  dim as integer selected = 1, previewsize, rowtotal
   dim as string key
   Dim As utility_framerate_type framerate = utility_framerate_type()
 
+  previewsize = 240
+  rowtotal = 3
+  
   do
     framerate.move()
     
     key = inkey()
     if key = controls.ink(controls.forcequit) then return false
-    if key = controls.ink(controls.p1_start) or key = controls.ink(controls.p2_start) then return false
+    if key = controls.ink(controls.p1_start) or key = controls.ink(controls.p2_start) then
+      setting.players = iif(key = controls.ink(controls.p1_start), 1, 2)
+      levelpack.load(selected)
+      return true
+    end if
     if key = controls.ink(controls.p1_left) and selected > 1 then selected -= 1
-    if key = controls.ink(controls.p1_right) and selected < levelpack.list_total then selected += 1
+    if key = controls.ink(controls.p1_right) and selected < levelpack.list_total and selected < rowtotal then selected += 1
     
     if framerate.candisplay() then
       screenlock()
-      cls
-      print "choose world"
-      print levelpack.list(selected).title,selected
+      multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, screen.scale * screen.default_sx / utility.graphic.menubackground_sx)
+      for i as integer = 1 to rowtotal
+        if i <= main.levelpack.list_total then
+          multiput( _
+            0, _
+            (i - .5) * (screen.view_sx / rowtotal) + screen.corner_sx, _
+            screen.scale_y(screen.default_sy * .5), _
+            utility.graphic.levelpackpreview(i), _
+            previewsize / 320, _
+            0, _
+            0, _
+            iif(selected = i, 255, 50))
+        end if
+      next i
+      utility.font.show(text1, text1x, screen.default_sy * .83)
+      if framerate.loop_total mod 18 >= 9 then
+        utility.font.show(text2, text2x, screen.default_sy * .90)
+      end if
       screenunlock()
     end if
   loop
   
+  return false
   
-  
-  
-  levelpack.load(selected)
-  return true
+  #endif
 end function
 
 sub main_type.gameover()
@@ -101,6 +129,8 @@ sub main_type.gameover()
 end sub
 
 function main_type.intro() as integer
+  #ifndef server_validator
+  
   #define text1 "Ultrabreaker"
   #define text1x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text1) / screen.scale) / 2
 
@@ -119,8 +149,8 @@ function main_type.intro() as integer
     
     key = inkey()
     if key = controls.ink(controls.forcequit) then return false
-    if key = controls.ink(controls.p1_start) then setting.players = 1: return true
-    if key = controls.ink(controls.p2_start) then setting.players = 2: return true
+    if key = controls.ink(controls.p1_start) then return true
+    if key = controls.ink(controls.p2_start) then return true
     
     angle += .02
     if backgroundangle > 0 then
@@ -136,11 +166,9 @@ function main_type.intro() as integer
     
     If framerate.candisplay() Then
       screenlock()
-      if backgroundangle > 0 then
-        cls()
-        multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, 1, 0, backgroundangle)
-      else
-        multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, 1, 0, backgroundangle , 100)
+      if backgroundangle > 0 then cls
+      multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, screen.scale * screen.default_sx / utility.graphic.menubackground_sx, 0, backgroundangle)
+      if backgroundangle = 0 then
         utility.font.show(text1, text1x, screen.default_sy * .83)
         if framerate.loop_total mod 18 >= 9 then
           utility.font.show(text2, text2x, screen.default_sy * .90)
@@ -152,6 +180,8 @@ function main_type.intro() as integer
   loop
   
   return false
+  
+  #endif
 end function
 
 function main_type.play() as integer
@@ -181,6 +211,8 @@ function main_type.play() as integer
       game.mode.orbtokens = .orbtokens
     end with
   loop
+  
+  utility.graphic.reloadlevelpackpreview(levelpack.indexOf)
   
   return score
 end function
@@ -285,6 +317,7 @@ Sub main_levelpack_type.addlp (Byref t As String)
     list_total += 1
     list(list_total).title = t
     list(list_total).iscompleted = (a = b)
+    utility.graphic.loadlevelpackpreview()
   Else
     list(exists).iscompleted = (a = b)
   End If
