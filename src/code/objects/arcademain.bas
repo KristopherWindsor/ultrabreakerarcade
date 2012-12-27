@@ -91,7 +91,11 @@ function main_type.choose_world() as integer
     
     if framerate.candisplay() then
       screenlock()
-      multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, screen.scale * screen.default_sx / utility.graphic.menubackground_sx)
+      if screen.screen_sx = 800 and screen.screen_sy = 600 then
+        put (0, 0), utility.graphic.menubackground, pset
+      else
+        multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, screen.scale * screen.default_sx / utility.graphic.menubackground_sx)
+      end if
       for i as integer = 1 to rowtotal
         if i <= main.levelpack.list_total then
           multiput( _
@@ -167,7 +171,11 @@ function main_type.intro() as integer
     If framerate.candisplay() Then
       screenlock()
       if backgroundangle > 0 then cls
-      multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, screen.scale * screen.default_sx / utility.graphic.menubackground_sx, 0, backgroundangle)
+      if backgroundangle = 0 and screen.screen_sx = 800 and screen.screen_sy = 600 then
+        put (0, 0), utility.graphic.menubackground, pset
+      else
+        multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, screen.scale * screen.default_sx / utility.graphic.menubackground_sx, 0, backgroundangle)
+      end if
       if backgroundangle = 0 then
         utility.font.show(text1, text1x, screen.default_sy * .83)
         if framerate.loop_total mod 18 >= 9 then
