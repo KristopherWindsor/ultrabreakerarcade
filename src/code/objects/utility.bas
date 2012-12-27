@@ -164,48 +164,6 @@ Function utility_type.gettext (Byref default As String = "", _
     framerate.move()
     sound.move()
     
-    With mouse
-      .update()
-      
-      'set object hover
-      If .c.b = 0 Then
-        object_hover = object_hover_enum.none
-        
-        tx = .c.sx - (margin + fieldwidth + animate_curve)
-        ty = .c.sy - (margin * 3 + fieldheight + animate_drop)
-        If Sqr(tx * tx + ty * ty) < margin Then
-          
-          object_hover = object_hover_enum.closebutton
-        Elseif .c.sx > margin * 3 And .c.sx < margin * 3 + text_width(text) / screen.scale And .c.sy > text_y + animate_drop And _
-          .c.sy < text_y + animate_drop + text_sy / screen.scale Then
-          
-          object_hover = object_hover_enum.textfield
-        End If
-      End If
-      
-      'action when mouse button is down
-      If .c.b > 0 Then
-        Select Case object_hover
-        Case object_hover_enum.closebutton
-          If readonly Or Len(text) > 0 Then quit = true: sound.add(sound_enum.menu_select)
-        Case object_hover_enum.textfield
-          'find the closest two cursor positions to the mouse, then see which one is closer
-          If Len(text) > 0 And readonly = false Then
-            tx = .c.sx - margin * 3
-            For i As Integer = 0 To Len(text)
-              If text_width(Left(text, i)) / screen.scale < tx Then ty = i
-            Next i
-            If Abs(text_width(Left(text, ty)) / screen.scale - tx) < Abs(text_width(Left(text, ty + 1)) / screen.scale - tx) Then
-              text_cursor = ty
-            Else
-              text_cursor = ty + 1
-            End If
-            text_selected = false
-          End If
-        End Select
-      End If
-    End With
-    
     key = Inkey()
     Select Case key
     Case ""
@@ -340,8 +298,6 @@ Function utility_type.gettext (Byref default As String = "", _
         Line (screen.scale_x(margin * 3) + text_cursor_x, screen.scale_y(text_y + animate_drop)) - _
           Step(0, text_sy), color_enum.black
       End If
-      
-      xfx.graphic.glow_show(mouse.c.sx, mouse.c.sy)
       
       Screenunlock()
     End If
@@ -827,17 +783,3 @@ Sub utility_graphic_type.savepreview ()
   end if
   #endif
 end sub
-
-Sub utility_mouse_type.update ()
-  p = c
-  
-  With c
-    If Getmouse(.x, .y, .w, .b) Then
-      c = p
-      .b = false
-    Else
-      .sx = screen.unscale_x(.x)
-      .sy = screen.unscale_y(.y)
-    End If
-  End With
-End Sub

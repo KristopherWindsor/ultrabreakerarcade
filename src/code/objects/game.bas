@@ -69,7 +69,6 @@ Sub game_type.reset ()
       .launchdelay = 0
     End With
   Next i
-  input_usemouse = false
   
   var nada = get_score() 'reset static var in this function
   
@@ -201,17 +200,18 @@ Sub game_type.run ()
   static as string cheat
   
   Dim As Integer f, screenshot, quit
-  dim as integer forcedraw, spresses 'forcedraw after pressing "s"
   Dim As Double menu_t
   Dim As String key
   
   load()
-  superfluous If ..setting.mouseclipping Then Setmouse(,,, 1)
   
   #ifndef server_validator
   Do
     key = Inkey()
     framerate.move()
+    
+    'there is no explicit forfeit flag, but .didwin is not set
+    if multikey(main.controls.p1_start) and multikey(main.controls.p2_start) then exit do
     
     'this is the main move() and display() stuff
     'replay speed controlled here
@@ -219,7 +219,7 @@ Sub game_type.run ()
       move()
       If get_winloss() Then Exit Do
     Next i
-    If framerate.candisplay() or forcedraw Then display(): forcedraw = false
+    If framerate.candisplay() Then display()
     
   Loop
   #Else
@@ -236,7 +236,7 @@ Sub game_type.move ()
   Static As Integer delayadjustment
   
   Dim As Integer oldclickstate1, oldclickstate2, ballsarestuck
-  Dim As Double angle
+  Dim As Double angle, speed
   
   frametotal += 1
   If frametotal = 1 Then delayadjustment = 0
@@ -248,42 +248,21 @@ Sub game_type.move ()
   end if
   #endif
   
-  With utility.mouse
-    .update()
-    If .c.sx <> .p.sx Or .c.sy <> .p.sy Then input_usemouse = true
-  End With
-  
   With game
     oldclickstate1 = .control(1).click
     oldclickstate2 = (.control(2).click And ..setting.players > 1)
     
-    'keyboard controls
     #ifndef server_validator
-    .input_key_x = Abs(Multikey(fb.SC_RIGHT)) - Abs(Multikey(fb.SC_LEFT))
-    .input_key_y = Abs(Multikey(fb.SC_DOWN)) - Abs(Multikey(fb.SC_UP))
-    If .input_key_x <> 0 Or .input_key_y <> 0 Then .input_usemouse = false
-    
-    If ..setting.players = 1 Then
-      If .input_usemouse Then
-        .control(1).x = utility.mouse.c.sx
-        .control(1).y = utility.mouse.c.sy
-      Else
-        .control(1).x += .input_key_x * ..setting.keyboardspeed
-        .control(1).y += .input_key_y * ..setting.keyboardspeed
-      End If
-      .control(1).click = utility.mouse.c.b > 0 Or Multikey(fb.sc_space)
-    Else
-      With .control(1)
-        .x = utility.mouse.c.sx
-        .y = utility.mouse.c.sy
-        .click = utility.mouse.c.b > 0
-      End With
-      With .control(2)
-        .x += input_key_x * ..setting.keyboardspeed
-        .y += input_key_y * ..setting.keyboardspeed
-        .click = Multikey(fb.sc_space)
-      End With
-    End If
+    if multikey(main.controls.p1_alt) then speed = ..setting.altkeyboardspeed else speed = ..setting.keyboardspeed
+    .control(1).x += (abs(multikey(main.controls.p1_right)) - abs(multikey(main.controls.p1_left))) * speed
+    .control(1).y += (abs(multikey(main.controls.p1_down)) - abs(multikey(main.controls.p1_up))) * speed
+    .control(1).click = multikey(main.controls.p1_fire)
+    If ..setting.players >= 2 Then
+      if multikey(main.controls.p2_alt) then speed = ..setting.altkeyboardspeed else speed = ..setting.keyboardspeed
+      .control(2).x += (abs(multikey(main.controls.p2_right)) - abs(multikey(main.controls.p2_left))) * speed
+      .control(2).y += (abs(multikey(main.controls.p2_down)) - abs(multikey(main.controls.p2_up))) * speed
+      .control(2).click = multikey(main.controls.p2_fire)
+    end if
     #Endif
     
     For i As Integer = 1 To ..setting.players
@@ -897,7 +876,6 @@ sub game_type.summary ()
   
   #ifndef server_validator
   'split-second animation
-  If ..setting.mouseclipping Then Setmouse(,,, 0)
   
   With ball.object(1)
     If ball.total = 0 Then

@@ -19,13 +19,13 @@ Type setting_type
   As Integer extras        'exploded paddles and nuke explosions
   As Integer flyingbricks  'flying bricks; 0 = off, 1 = shadows, 2 = textured
   As Integer hicontrast    'gray-out the background, for wierd people
-  As Integer mouseclipping 'clip mouse while playing
   As Integer particles     'on / off
   As Integer players       'total number of players
   As Integer tips          'show tip when level starts
   As Integer vsync         'fix shearing
   as integer autosave      'save every recording, coz i said so!
   as integer keyboardspeed 'keyboard control movement
+  as integer altkeyboardspeed 'when alt is pressed
   
   as setting_featurelock_enum unlockedmode 'means you haven't unlocked some certain pack that enables the store + editor
   

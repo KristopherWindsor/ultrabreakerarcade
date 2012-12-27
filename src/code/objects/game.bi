@@ -123,13 +123,7 @@ Type game_type
   
   'everything below changes throughout the level
   
-  'the mouse coords, or coords adjusted by keyboard; the mouse button / enter key
   As game_control_type control(1 To 2)
-  
-  'input values (except mouse)
-  As Integer input_key_x 'arrow keys
-  As Integer input_key_y
-  As Integer input_usemouse 'only for coords; click is set by both mouse and keyboard; not used for multiplayer
   
   'for things that happen every few frames
   As Integer frametotal

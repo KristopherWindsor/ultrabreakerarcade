@@ -92,21 +92,6 @@ Type utility_graphic_type
   As Integer totalimages 'total number of images loaded
 End Type
 
-Type utility_mouse_static_type
-  As Integer x, y, w, b
-  As Integer sx, sy 'scaled x and y (always in (0 - 1023) * (0 - 767) mode)
-End Type
-
-operator = (a As utility_mouse_static_type, b As utility_mouse_static_type) As Integer
-  Return a.x = b.x And a.y = b.y And a.b = b.b And a.w = b.w
-End operator
-
-Type utility_mouse_type
-  Declare Sub update ()
-  
-  As utility_mouse_static_type c, p 'current, previous
-End Type
-
 type utility_type
   
   declare sub start ()
@@ -138,7 +123,6 @@ type utility_type
   
   As utility_font_type font
   As utility_graphic_type graphic
-  As utility_mouse_type mouse
   
   as any ptr threadmutex
 end type

@@ -14,11 +14,11 @@ Sub setting_type.start ()
   Input #f, bullettextures
   Input #f, players
   Input #f, vsync
-  Input #f, mouseclipping
   Input #f, hicontrast
   Input #f, tips
   Input #f, autosave
   Input #f, keyboardspeed
+  Input #f, altkeyboardspeed
   Input #f, unlockedmode
   Input #f, areyounotnew
   Close #f
@@ -43,11 +43,11 @@ Sub setting_type.finish ()
   Print #f, bullettextures
   Print #f, players
   Print #f, vsync
-  Print #f, mouseclipping
   Print #f, hicontrast
   Print #f, tips
   Print #f, autosave
   Print #f, keyboardspeed
+  Print #f, altkeyboardspeed
   Print #f, unlockedmode
   Print #f, areyounotnew
   Close #f
