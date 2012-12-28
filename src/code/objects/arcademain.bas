@@ -209,7 +209,7 @@ function main_type.play() as integer
       score += .scoregained
       if not .didwin then exit do
       
-      if game.mode.level + 1 = levelpack.level_total then
+      if game.mode.level = levelpack.level_total then
         game.mode.level = 1
         game.mode.speed *= sqr(2)
       else
