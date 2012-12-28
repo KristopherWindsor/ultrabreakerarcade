@@ -857,12 +857,6 @@ Sub game_type.load ()
   If version < version_min Then utility.logerror("Level Too Old (v" & version & ", supports >= v" & version_min & ")")
   If version >= version_max Then utility.logerror("Level Too New (v" & version & ", supports < v" & version_max & ")")
   
-  If Len(setting.tip) > 0 Then
-    If ..setting.tips Then
-      setting.tip = utility.gettext(setting.tip, true)
-    End If
-  End If
-  
   gfxchange()
   reset2()
 End Sub
@@ -901,19 +895,6 @@ sub game_type.summary ()
   'save level preview
   if data_getpreview and frametotal >= fps \ 2 then utility.graphic.savepreview()
   #Endif
-  
-  'not shown for testing because you don't want the game to get stuck (it wouldn't focus when testing starts)
-  If ..setting.tips Then
-    If result.didwin Then
-      If Len(setting.tipwin) > 0 Then
-        setting.tipwin = utility.gettext(setting.tipwin, true)
-      End If
-    Else
-      If Len(setting.tiplose) > 0 Then
-        setting.tiplose = utility.gettext(setting.tiplose, true)
-      End If
-    End If
-  End If
   
   timebonus = Int(timebonusmax * ((setting.timelimit - frametotal) / setting.timelimit) ^ timebonusexponent + .5)
   If timebonus < 0 Or result.didwin = false Then timebonus = 0

@@ -115,8 +115,7 @@ Function utility_type.getclipboard () As String
   #Endif
 End Function
 
-Function utility_type.gettext (Byref default As String = "", _
-  Byval readonly As Integer = false, byref title as string = "") As String
+Function utility_type.gettext (byref title as string = "") As String
   'ask the user to type a cheat / highscore entry player name
   #ifndef server_validator
   
@@ -125,16 +124,15 @@ Function utility_type.gettext (Byref default As String = "", _
   Const margin = 50 * dsfactor, char_max = 16
   Const fieldwidth = screen.default_sx - margin * 4, fieldheight = screen.default_sy / 2 - margin * 3
   Const char_disallowed = Chr(9, 10)
-  Const whitelist = "qwertyuiopasdfghjklzxcvbnm1234567890() !?:$-+_="
+  Const whitelist = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890() !?:$-+_="
   
   Enum object_hover_enum
     none        = 0
-    closebutton = 1
-    textfield   = 2
+    textfield   = 1
   End Enum
   
   Dim As Integer quit
-  Dim As Integer text_cursor, text_cursor_x, text_selected, text_sy, text_y
+  Dim As Integer text_cursor, text_cursor_x, text_sy, text_y
   Dim As Double animate_drop, animate_drop_start, animate_curve, tx, ty
   Dim As String key, text
   
@@ -143,20 +141,18 @@ Function utility_type.gettext (Byref default As String = "", _
   Dim As utility_font_setting_type fonttype
   Dim As utility_framerate_type framerate = utility_framerate_type()
   
-  If readonly And Len(default) = 0 Then Return ""
-  
   Screenlock()
   xfx.graphic.effect_grayscale()
   Get (0, 0) - (screen.screen_sx - 1, screen.screen_sy - 1), graphic.screenshot
   Screenunlock()
   
+  text = "A"
+  text_cursor = 1
+  
   framerate.reset()
   
   animate_drop_start = -(margin * 4 + fieldheight + screen.corner_sy / screen.scale)
   animate_drop = animate_drop_start
-  text = default
-  If readonly = false Then text_cursor = Len(text)
-  text_selected = (Len(text) > 0) And (readonly = false)
   text_sy = this.font.abf.gettextheight(this.font.font_pt_selected)
   text_y = margin * 4 + fieldheight / 2 - text_sy / screen.scale
   
@@ -167,73 +163,41 @@ Function utility_type.gettext (Byref default As String = "", _
     key = Inkey()
     Select Case key
     Case ""
-    Case Chr(13), Chr(27)
+    Case main.controls.ink(main.controls.p1_fire)
       'close
-      If readonly Or Len(text) > 0 Then quit = true: sound.add(sound_enum.menu_select)
+      If Len(text) > 0 Then quit = true: sound.add(sound_enum.menu_select)
     Case Else
       'unless closing function, play a sound
       sound.add(sound_enum.menu_changeselected)
     End Select
     
-    If readonly = false Then
-      Select Case key
-      Case Chr(13), Chr(27)
-        'these events handled above (even if readonly)
-      Case Chr(8)
-        'backspace
-        If text_selected Then
-          text = ""
-          text_cursor = 0
-        Elseif Len(text) > 0 And text_cursor > 0 Then
+    select case key
+    case main.controls.ink(main.controls.p1_up)
+      if text_cursor > 0 and mid(text, text_cursor, 1) <> "A" then
+        mid(text, text_cursor, 1) = mid(whitelist, instr(whitelist, mid(text, text_cursor, 1)) - 1, 1)
+      end if
+    case main.controls.ink(main.controls.p1_down)
+      if text_cursor > 0 and mid(text, text_cursor, 1) <> "=" then
+        mid(text, text_cursor, 1) = mid(whitelist, instr(whitelist, mid(text, text_cursor, 1)) + 1, 1)
+      end if
+    case main.controls.ink(main.controls.p1_left)
+      if multikey(main.controls.p1_alt) then
+        if text_cursor > 0 then text_cursor -= 1
+      else
+        if Len(text) > 0 And text_cursor > 0 Then
           text_cursor -= 1
           text = Left(text, text_cursor) & Mid(text, text_cursor + 2)
         End If
-      Case Chr(255, 83)
-        'delete
-        If text_selected Then
-          text = ""
-          text_cursor = 0
-        Elseif text_cursor < Len(text) Then
-          text = Left(text, text_cursor) & Mid(text, text_cursor + 2)
-        End If
-      Case Chr(255, 75)
-        'left
-        text_selected = false
-        If text_cursor > 0 Then text_cursor -= 1
-      Case Chr(255, 77)
-        'right
-        text_selected = false
+      end if
+    case main.controls.ink(main.controls.p1_right)
+      if multikey(main.controls.p1_alt) then
         If text_cursor < Len(text) Then text_cursor += 1
-      Case Chr(255, 71)
-        'home
-        text_cursor = 0
-      Case Chr(255, 79)
-        'end
-        text_cursor = Len(text)
-      Case Chr(22)
-        'paste
-        text_selected = true
-        text = getclipboard()
-        For i As Integer = Len(text) To 1 Step -1
-          If Instr(whitelist, Mid(text, i, 1)) = 0 Then text = Left(text, i - 1) & Mid(text, i + 1)
-        Next i
-        If Len(text) > char_max Then text = Left(text, char_max)
-        text_cursor = Len(text)
-      Case Else
-        If Len(key) = 1 Then
-          If text_selected Then
-            text_selected = false
-            text = ""
-            text_cursor = 0
-          End If
-          If Len(text) < char_max And Instr(whitelist, Lcase(key)) > 0 Then
-            text = Left(text, text_cursor) & key & Mid(text, text_cursor + 1)
-            text_cursor += 1
-          End If
-        End If
-      End Select
-    End If
-      
+      else
+        text_cursor += 1
+        text += "A"
+      end if
+    end select
+    
     If quit Then
       animate_drop -= 12 * dsfactor
       If animate_curve > 0 Then animate_curve -= 1
@@ -244,7 +208,6 @@ Function utility_type.gettext (Byref default As String = "", _
     End If
     
     text_cursor_x = text_width(Left(text, text_cursor))
-    If text_selected Then fonttype.c_back = &H66FFFFFF Else fonttype.c_back = 0
     
     If framerate.candisplay() Then
       Screenlock()
@@ -272,10 +235,8 @@ Function utility_type.gettext (Byref default As String = "", _
           color_enum.green, BF
         Circle (screen.scale_x(margin + fieldwidth + animate_curve) - 1, screen.scale_y(margin * 5 + animate_drop)), _
           screen.scale * margin, color_enum.green,,, 1, F
-        'close button
         Circle (screen.scale_x(margin + fieldwidth + animate_curve) - 1, screen.scale_y(margin * 3 + fieldheight + animate_drop)), _
-          screen.scale * margin * Iif(object_hover = object_hover_enum.closebutton, 2, 1), _
-          Iif(animate_curve = margin Or object_hover = object_hover_enum.closebutton, color_enum.black, color_enum.green),,, 1, F
+          screen.scale * margin, color_enum.green,,, 1, F
       End If
       
       'text
@@ -293,7 +254,7 @@ Function utility_type.gettext (Byref default As String = "", _
       
       'cursor
       If ((framerate.loop_total Mod framerate.fps_loop) > framerate.fps_loop * .5 Or _
-        object_hover = object_hover_enum.textfield) And readonly = false Then
+        object_hover = object_hover_enum.textfield) Then
         
         Line (screen.scale_x(margin * 3) + text_cursor_x, screen.scale_y(text_y + animate_drop)) - _
           Step(0, text_sy), color_enum.black

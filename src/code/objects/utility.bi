@@ -100,8 +100,7 @@ type utility_type
   declare sub consmessage (Byref e As String)
   declare function formattime (Byval t As Integer) As String
   declare function getclipboard () As String
-  declare function gettext (Byref default As String = "", _
-    Byval readonly As Integer = false, byref title as string = "") As String
+  declare function gettext (byref title as string = "") As String
   declare sub logerror (Byref e As String)
   declare function openfile (Byref filename As String, _
     Byval mode As Integer, Byval ignoreerrors As Integer = false) As Integer
