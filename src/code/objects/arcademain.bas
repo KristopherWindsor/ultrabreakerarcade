@@ -123,13 +123,17 @@ function main_type.choose_world() as integer
 end function
 
 sub main_type.gameover()
-  cls
-  print "enter your name..."
-  sleep 500,1
+  dim as string player
   
-  cls
-  print "show highscores now"
-  sleep
+  levelpack.save()
+  player = utility.gettext("High score!")
+'  cls
+'  print "enter your name..."
+'  sleep 500,1
+'  
+'  cls
+'  print "show highscores now"
+'  sleep
 end sub
 
 function main_type.intro() as integer
@@ -341,9 +345,11 @@ Sub main_levelpack_type.load Overload (index As Integer)
   f = utility.openfile("data/levelpacks/" & Lcase(list(index).title) & "/data.txt", _
     utility_file_mode_enum.for_input)
   Input #f, level_total
-  Input #f, unlockedtotal
   Line Input #f, ngfxset: gfxset = ngfxset
-  Line Input #f, unlocks
+  For i as integer = 1 to highscore_max
+    input #f, highscore_value(i)
+    line input #f, highscore_name(i)
+  next i
   Close #f
   
   'load titles for each level
@@ -369,9 +375,11 @@ Sub main_levelpack_type.save ()
   f = utility.openfile("data/levelpacks/" & Lcase(title) & "/data.txt", _
     utility_file_mode_enum.for_output)
   Print #f, level_total
-  Print #f, unlockedtotal
   Print #f, gfxset
-  Print #f, unlocks
+  For i as integer = 1 to highscore_max
+    print #f, highscore_value(i)
+    print #f, highscore_name(i)
+  next i
   Close #f
 End Sub
 

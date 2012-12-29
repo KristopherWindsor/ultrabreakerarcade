@@ -121,6 +121,12 @@ Function utility_type.gettext (byref title as string = "") As String
   
   #define text_width(t) font.abf.gettextwidth(font.font_pt_selected, t)
   
+  #define text1 "Ultrabreaker"
+  #define text1x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text1) / screen.scale) / 2
+
+  #define text2 "New High Score!"
+  #define text2x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text2) / screen.scale) / 2
+
   Const margin = 50 * dsfactor, char_max = 16
   Const fieldwidth = screen.default_sx - margin * 4, fieldheight = screen.default_sy / 2 - margin * 3
   Const char_disallowed = Chr(9, 10)
@@ -142,7 +148,6 @@ Function utility_type.gettext (byref title as string = "") As String
   Dim As utility_framerate_type framerate = utility_framerate_type()
   
   Screenlock()
-  xfx.graphic.effect_grayscale()
   Get (0, 0) - (screen.screen_sx - 1, screen.screen_sy - 1), graphic.screenshot
   Screenunlock()
   
@@ -151,7 +156,7 @@ Function utility_type.gettext (byref title as string = "") As String
   
   framerate.reset()
   
-  animate_drop_start = -(margin * 4 + fieldheight + screen.corner_sy / screen.scale)
+  animate_drop_start = -(margin * 12 + fieldheight + screen.corner_sy / screen.scale)
   animate_drop = animate_drop_start
   text_sy = this.font.abf.gettextheight(this.font.font_pt_selected)
   text_y = margin * 4 + fieldheight / 2 - text_sy / screen.scale
@@ -212,6 +217,8 @@ Function utility_type.gettext (byref title as string = "") As String
     If framerate.candisplay() Then
       Screenlock()
       Put (0, 0), graphic.screenshot, Pset
+      xfx.graphic.effect_grayscale()
+      if framerate.loop_total < 255 then Put (0, 0), graphic.screenshot, alpha, 255 - framerate.loop_total
       'support
       Line (screen.scale_x(margin + fieldwidth), 0) - _
         (screen.scale_x(margin * 2 + fieldwidth), screen.scale_y(margin * 4 + animate_drop)), color_enum.green, BF
@@ -240,13 +247,9 @@ Function utility_type.gettext (byref title as string = "") As String
       End If
       
       'text
-      if len(title) > 0 then
-        line (screen.scale_x(0), screen.scale_y(screen.default_sy - _
-          font.abf.gettextheight(font.font_pt_selected) / screen.scale)) - _
-          (screen.scale_x(screen.default_sx), screen.scale_y(screen.default_sy)), _
-          color_enum.white, BF
-        font.show(title, margin * 3, screen.default_sy - _
-          font.abf.gettextheight(font.font_pt_selected) / screen.scale)
+      utility.font.show(text1, text1x, screen.default_sy * .83)
+      if framerate.loop_total mod 18 >= 9 then
+        utility.font.show(text2, text2x, screen.default_sy * .90)
       end if
       If Len(text) > 0 Then
         this.font.show(text, margin * 3, text_y + animate_drop, fonttype)
@@ -700,7 +703,7 @@ Sub utility_graphic_type.loadpreview ()
   dim as integer f
   dim as string filename
   
-  if levelpreview_total >= main.levelpack.level_total or levelpreview_total > main.levelpack.unlockedtotal then return
+  if levelpreview_total >= main.levelpack.level_total then return
   levelpreview_total += 1
   
   var g = utility.createimage(320, 240 mop("utility levelpreview"), color_enum.black)

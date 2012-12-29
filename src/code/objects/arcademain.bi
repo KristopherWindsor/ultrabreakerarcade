@@ -23,6 +23,7 @@ Type main_levelpack_type
   
   Const level_max = 256
   Const list_max = 1024
+  Const highscore_max = 8
   
   as any ptr threadmutex
   
@@ -43,9 +44,11 @@ Type main_levelpack_type
   
   as integer indexOf 'title is list(indexOf).title
   
-  As Integer level_total, unlockedtotal
+  As Integer level_total
   As String level(1 To level_max) 'level names
-  As String unlocks 'name of levelpack this pack will unlock / undelete
+  
+  As String highscore_name(1 to highscore_max)
+  As Integer highscore_value(1 to highscore_max)
   
   'data is for all the levelpacks
   
