@@ -47,8 +47,8 @@ Type main_levelpack_type
   As Integer level_total
   As String level(1 To level_max) 'level names
   
-  As String highscore_name(1 to highscore_max)
-  As Integer highscore_value(1 to highscore_max)
+  As String highscore_name(1 to 2, 1 to highscore_max)
+  As Integer highscore_value(1 to 2, 1 to highscore_max)
   
   'data is for all the levelpacks
   

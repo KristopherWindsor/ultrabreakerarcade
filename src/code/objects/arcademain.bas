@@ -122,10 +122,10 @@ end function
 sub main_type.gameover(score as integer)
   #ifndef server_validator
   
-  #define text1 "World " & levelpack.indexOf & " Single Player High Scores"
+  #define text1 "World " & levelpack.indexOf & temps & " High Scores"
   #define text1x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text1) / screen.scale) / 2
 
-  dim as string key
+  dim as string key, temps
   dim as integer rank = levelpack.addscore(score), temp
   Dim As utility_framerate_type framerate = utility_framerate_type()
   
@@ -143,12 +143,14 @@ sub main_type.gameover(score as integer)
         multiput(0, screen.screen_sx \ 2, screen.screen_sy \ 2, utility.graphic.menubackground, screen.scale * screen.default_sx / utility.graphic.menubackground_sx)
       end if
       
+      if setting.players = 1 then temps = " Single Player" else temps = " Team"
       utility.font.show(text1, text1x, screen.default_sy * .1)
+      
       for i as integer = 1 to levelpack.highscore_max
         if i = rank and framerate.loop_total mod 18 < 9 then continue for
-        temp = screen.default_sx * .45 - utility.font.abf.gettextwidth(utility.font.font_pt_selected, str(levelpack.highscore_value(i))) / screen.scale / 2
-        utility.font.show(str(levelpack.highscore_value(i)), temp, screen.default_sy * (.15 + i * .1))
-        utility.font.show(levelpack.highscore_name(i), screen.default_sx * .55, screen.default_sy * (.15 + i * .1))
+        temp = screen.default_sx * .45 - utility.font.abf.gettextwidth(utility.font.font_pt_selected, str(levelpack.highscore_value(setting.players, i))) / screen.scale / 2
+        utility.font.show(str(levelpack.highscore_value(setting.players, i)), temp, screen.default_sy * (.15 + i * .1))
+        utility.font.show(levelpack.highscore_name(setting.players, i), screen.default_sx * .55, screen.default_sy * (.15 + i * .1))
       next i
       screenunlock()
     end if
@@ -368,9 +370,11 @@ Sub main_levelpack_type.load Overload (index As Integer)
     utility_file_mode_enum.for_input)
   Input #f, level_total
   Line Input #f, ngfxset: gfxset = ngfxset
-  For i as integer = 1 to highscore_max
-    input #f, highscore_value(i)
-    line input #f, highscore_name(i)
+  for i as integer = 1 to 2
+    For j as integer = 1 to highscore_max
+      input #f, highscore_value(i, j)
+      line input #f, highscore_name(i, j)
+    next j
   next i
   Close #f
   
@@ -398,25 +402,27 @@ Sub main_levelpack_type.save ()
     utility_file_mode_enum.for_output)
   Print #f, level_total
   Print #f, gfxset
-  For i as integer = 1 to highscore_max
-    print #f, highscore_value(i)
-    print #f, highscore_name(i)
+  for i as integer = 1 to 2
+    For j as integer = 1 to highscore_max
+      print #f, highscore_value(i, j)
+      print #f, highscore_name(i, j)
+    next j
   next i
   Close #f
 End Sub
 
 function main_levelpack_type.addscore (score as integer) as integer
-  if score <= highscore_value(highscore_max) then return 0
+  if score <= highscore_value(setting.players, highscore_max) then return 0
   
   for i as integer = highscore_max to 1 step -1
-    if i = 1 orelse score <= highscore_value(i - 1) then
-      highscore_name(i) = utility.gettext("New High Score!!")
-      highscore_value(i) = score
+    if i = 1 orelse score <= highscore_value(setting.players, i - 1) then
+      highscore_name(setting.players, i) = utility.gettext("New High Score!!")
+      highscore_value(setting.players, i) = score
       function = i
       exit for
     else
-      highscore_name(i) = highscore_name(i - 1)
-      highscore_value(i) = highscore_value(i - 1)
+      highscore_name(setting.players, i) = highscore_name(setting.players, i - 1)
+      highscore_value(setting.players, i) = highscore_value(setting.players, i - 1)
     end if
   next i
   
