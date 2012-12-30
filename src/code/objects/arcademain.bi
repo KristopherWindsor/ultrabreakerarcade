@@ -23,7 +23,7 @@ Type main_levelpack_type
   
   Const level_max = 256
   Const list_max = 1024
-  Const highscore_max = 8
+  Const highscore_max = 6
   
   as any ptr threadmutex
   
@@ -32,7 +32,7 @@ Type main_levelpack_type
   Declare Sub load overload (index as integer)
   Declare Sub load overload (t as string)
   Declare Sub save ()
-  Declare Sub unlock ()
+  Declare function addscore (score as integer) as integer 'return new score rank or 0
   
   Declare property gfxset () As String
   Declare property gfxset (Byref igfxset As String)
@@ -69,7 +69,7 @@ type main_type
   declare sub screenchange ()
   declare sub finish ()
   declare function choose_world () as integer
-  declare sub gameover ()
+  declare sub gameover (score as integer)
   declare function intro () as integer
   declare function play () as integer
   

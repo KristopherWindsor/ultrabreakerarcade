@@ -127,7 +127,7 @@ Function utility_type.gettext (byref title as string = "") As String
   #define text2 "New High Score!"
   #define text2x (screen.default_sx - utility.font.abf.gettextwidth(utility.font.font_pt_selected, text2) / screen.scale) / 2
 
-  Const margin = 50 * dsfactor, char_max = 16
+  Const margin = 50 * dsfactor, char_max = 6
   Const fieldwidth = screen.default_sx - margin * 4, fieldheight = screen.default_sy / 2 - margin * 3
   Const char_disallowed = Chr(9, 10)
   Const whitelist = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890() !?:$-+_="
@@ -198,8 +198,10 @@ Function utility_type.gettext (byref title as string = "") As String
       if multikey(main.controls.p1_alt) then
         If text_cursor < Len(text) Then text_cursor += 1
       else
-        text_cursor += 1
-        text += "A"
+        if len(text) < char_max then
+          text_cursor += 1
+          text += "A"
+        end if
       end if
     end select
     
