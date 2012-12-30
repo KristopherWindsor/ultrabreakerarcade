@@ -134,6 +134,7 @@ sub main_type.gameover(score as integer)
     
     key = inkey()
     if key = controls.ink(controls.p1_fire) or key = controls.ink(controls.p1_start) then exit do
+    if framerate.loop_total \ framerate.fps_loop >= 120 then exit do
     
     if framerate.candisplay() then
       screenlock()
